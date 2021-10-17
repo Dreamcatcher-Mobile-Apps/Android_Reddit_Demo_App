@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/detailed_view_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground"
+        android:clickable="true"
+        android:focusable="false"
+        android:elevation="@dimen/detailed_view_elevation">
+
+    <RelativeLayout
+            android:id="@+id/spacing_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/detailed_view_vertical_extra_spacing"
+            android:alpha="0.7"
+            android:background="@color/colorBackgroundAlternative"
+            app:layout_constraintBottom_toTopOf="@id/main_content"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:paddingStart="@dimen/detailed_view_padding_horizontal"
+            android:paddingTop="@dimen/detailed_view_padding_top"
+            android:paddingEnd="@dimen/detailed_view_padding_horizontal"
+            android:paddingBottom="@dimen/detailed_view_padding_bottom"
+            app:layout_constraintBottom_toTopOf="@id/spacing_bottom"
+            app:layout_constraintTop_toBottomOf="@id/spacing_top">
+
+        <ImageButton
+                android:id="@+id/btn_cross"
+                android:layout_width="@dimen/detailed_view_cross_button_length"
+                android:layout_height="@dimen/detailed_view_cross_button_length"
+                android:layout_marginStart="@dimen/detailed_view_cross_button_margin"
+                android:background="@null"
+                android:contentDescription="@string/close"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_cross"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <WebView
+                android:id="@+id/website_view"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/detailed_view_webview_margin"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_cross" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <RelativeLayout
+            android:id="@+id/spacing_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/detailed_view_vertical_extra_spacing"
+            android:alpha="0.7"
+            android:background="@color/colorBackgroundAlternative"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/main_content" />
+
+    <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
