@@ -23,13 +23,19 @@ android {
         // Required by ViewModelFactory (Dagger2)
         freeCompilerArgs = ['-Xjvm-default=compatibility']
     }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.0.5'
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     // Kotlin standard library
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.30'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10'
 
     // Lifecycle components
     implementation 'android.arch.lifecycle:extensions:1.1.1'
