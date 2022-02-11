@@ -6,11 +6,20 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.composethemeadapter.MdcTheme
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
@@ -45,14 +54,35 @@ class FeedActivity : AppCompatActivity() {
         // Initialize ViewModel
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel::class.java)
 
-        // Initialize RecyclerView (feed items)
-        setupRecyclerView()
+//        // Initialize RecyclerView (feed items)
+//        setupRecyclerView()
+//
+//        // Fetch feed items from the back-end and load them into the view
+//        subscribeForFeedItems()
+//
+//        // Catch and handle potential update (e.g. network) issues
+//        subscribeForUpdateError()
 
-        // Fetch feed items from the back-end and load them into the view
-        subscribeForFeedItems()
+        app_title.setContent {
+            MdcTheme {
+                AppTitle()
+            }
+        }
+    }
 
-        // Catch and handle potential update (e.g. network) issues
-        subscribeForUpdateError()
+    @Composable
+    private fun AppTitle() {
+        Text(
+            text = stringResource(R.string.app_name),
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally)
+        )
+    }
+
+    @Preview
+    @Composable
+    fun ComposablePreview() {
+        AppTitle()
     }
 
     private fun setupRecyclerView() {
