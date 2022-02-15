@@ -24,7 +24,7 @@ public class FeedViewTest {
             new ActivityTestRule<>(FeedActivity.class);
 
     @Test
-    public void clickOnListedItem_opensDetailedView() throws Exception {
+    public void clickOnListedItem_opensDetailedView() {
 
         // Click on the first item.
         onView(ViewMatchers.withId(R.id.main_feed_recyclerview))
@@ -35,7 +35,7 @@ public class FeedViewTest {
     }
 
     @Test
-    public void clickOnCrossButton_closesDetailedView() throws Exception {
+    public void clickOnCrossButton_closesDetailedView() {
 
         // Click on the first item.
         onView(withId(R.id.main_feed_recyclerview))

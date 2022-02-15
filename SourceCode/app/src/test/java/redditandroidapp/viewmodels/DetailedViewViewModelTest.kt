@@ -50,7 +50,7 @@ class DetailedViewViewModelTest {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postEntityLiveData.setValue(fakePostDatabaseEntity);
+        postEntityLiveData.setValue(fakePostDatabaseEntity)
 
         // Prepare fake post id
         val fakePostId = 0
@@ -62,6 +62,6 @@ class DetailedViewViewModelTest {
         val storedPost = viewModel?.getSingleSavedPostById(fakePostId)
 
         // Check results
-        Assert.assertSame(postEntityLiveData, storedPost);
+        Assert.assertSame(postEntityLiveData, storedPost)
     }
 }

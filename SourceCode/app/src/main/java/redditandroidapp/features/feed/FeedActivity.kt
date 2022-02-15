@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -15,53 +16,41 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.composethemeadapter.MdcTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
 import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.features.detailedview.DetailedViewFragment
-import redditandroidapp.injection.RedditAndroidApp
-import javax.inject.Inject
-
 
 // Main ('feed') view
+@AndroidEntryPoint
 class FeedActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: FeedViewModel
+    private val viewModel: FeedViewModel by viewModels()
     private lateinit var postsListAdapter: PostsListAdapter
     var isLoadingMoreItems: Boolean = false
 
     private val STATE_LOADING_ERROR = "STATE_LOADING_ERROR"
     private val STATE_CONTENT_LOADED = "STATE_CONTENT_LOADED"
 
-    init {
-        RedditAndroidApp.mainComponent.inject(this)
-    }
-
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Initialize ViewModel
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(FeedViewModel::class.java)
+        // Initialize RecyclerView (feed items)
+        setupRecyclerView()
 
-//        // Initialize RecyclerView (feed items)
-//        setupRecyclerView()
-//
-//        // Fetch feed items from the back-end and load them into the view
-//        subscribeForFeedItems()
-//
-//        // Catch and handle potential update (e.g. network) issues
-//        subscribeForUpdateError()
+        // Fetch feed items from the back-end and load them into the view
+        subscribeForFeedItems()
+
+        // Catch and handle potential update (e.g. network) issues
+        subscribeForUpdateError()
 
         app_title.setContent {
             MdcTheme {
@@ -114,7 +103,7 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.subscribeForPosts(true)?.observe(this, Observer<List<PostDatabaseEntity>> {
+        viewModel.subscribeForPosts(true)?.observe(this) {
 
             if (!it.isNullOrEmpty()) {
                 setViewState(STATE_CONTENT_LOADED)
@@ -124,11 +113,11 @@ class FeedActivity : AppCompatActivity() {
             }
 
             isLoadingMoreItems = false
-        })
+        }
     }
 
     private fun subscribeForUpdateError() {
-        viewModel.subscribeForUpdateErrors()?.observe(this, Observer<Boolean> {
+        viewModel.subscribeForUpdateErrors()?.observe(this) {
 
             // Case of Network Error if no items have been cached
             if (postsListAdapter.itemCount == 0) {
@@ -136,10 +125,14 @@ class FeedActivity : AppCompatActivity() {
             }
 
             // Display error message to the user
-            Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                this,
+                R.string.network_problem_check_internet_connection,
+                Toast.LENGTH_LONG
+            ).show()
 
             isLoadingMoreItems = false
-        })
+        }
     }
 
     private fun refreshPostsSubscription() {

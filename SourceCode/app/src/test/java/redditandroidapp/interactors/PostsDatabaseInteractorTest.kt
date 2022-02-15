@@ -69,7 +69,7 @@ class PostsDatabaseInteractorTest {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postEntityLiveData.setValue(fakePostDatabaseEntity);
+        postEntityLiveData.setValue(fakePostDatabaseEntity)
 
         // Set testing conditions
         Mockito.`when`(postsDatabase?.getPostsDao()).thenReturn(postsDao)
@@ -79,7 +79,7 @@ class PostsDatabaseInteractorTest {
         val storedPost = postsDatabaseInteractor?.getSingleSavedPostById(0)
 
         // Check results
-        Assert.assertSame(postEntityLiveData, storedPost);
+        Assert.assertSame(postEntityLiveData, storedPost)
     }
 
     @Test
@@ -97,6 +97,6 @@ class PostsDatabaseInteractorTest {
         val storedPost = postsDatabaseInteractor?.getAllPosts()
 
         // Check results
-        Assert.assertSame(postEntityLiveData, storedPost);
+        Assert.assertSame(postEntityLiveData, storedPost)
     }
 }

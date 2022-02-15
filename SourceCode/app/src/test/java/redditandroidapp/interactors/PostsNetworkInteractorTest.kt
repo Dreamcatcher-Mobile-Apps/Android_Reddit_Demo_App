@@ -42,7 +42,7 @@ class PostsNetworkInteractorTest {
         val fakePostGsonModel = PostGsonModel(url, title, imageUrl, author, null)
         fakePostsResponseGsonModel = PostsResponseGsonModel(
             ChildrenPostsDataGsonModel(
-                listOf(SinglePostDataGsonModel(fakePostGsonModel!!))
+                listOf(SinglePostDataGsonModel(fakePostGsonModel))
             )
         )
     }
@@ -60,7 +60,7 @@ class PostsNetworkInteractorTest {
         val storedPosts = postsNetworkInteractor?.getFreshPosts()
 
         // Check results
-        Assert.assertSame(getAllPostsResponse, storedPosts);
+        Assert.assertSame(getAllPostsResponse, storedPosts)
 
     }
 }

@@ -7,31 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.detailed_view.*
 import redditandroidapp.R
 import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.network.NetworkConstants
-import redditandroidapp.injection.RedditAndroidApp
-import javax.inject.Inject
 
 // Detailed view for displaying chosen item
+@AndroidEntryPoint
 class DetailedViewFragment : Fragment() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    private lateinit var viewModel: DetailedViewViewModel
-
-    init {
-        RedditAndroidApp.mainComponent.inject(this)
-    }
+    private val viewModel: DetailedViewViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        // Initialize ViewModel
-        viewModel = ViewModelProviders.of(this, viewModelFactory).get(DetailedViewViewModel::class.java)
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.detailed_view, container, false)
@@ -55,14 +45,14 @@ class DetailedViewFragment : Fragment() {
     private fun subscribeForPost() {
         val postId = this.arguments?.getInt("postId")
         postId?.let {
-            viewModel.getSingleSavedPostById(it)?.observe(this, Observer<PostDatabaseEntity> {
+            viewModel.getSingleSavedPostById(it)?.observe(viewLifecycleOwner) {
                 val baseUrl = NetworkConstants.BASE_URL
                 val specificUrl = it?.permalink
                 specificUrl?.let {
                     val postUrl = baseUrl + specificUrl
                     setupWebView(postUrl)
                 }
-            })
+            }
         }
     }
 

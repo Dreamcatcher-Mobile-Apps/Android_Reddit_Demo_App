@@ -64,6 +64,6 @@ class FeedViewModelTest {
         val storedPosts = viewModel?.subscribeForPosts(false)
 
         // Check results
-        Assert.assertSame(postsEntityLiveData, storedPosts);
+        Assert.assertSame(postsEntityLiveData, storedPosts)
     }
 }

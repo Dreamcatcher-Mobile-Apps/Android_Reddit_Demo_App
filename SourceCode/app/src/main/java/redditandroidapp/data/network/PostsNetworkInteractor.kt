@@ -1,6 +1,5 @@
 package redditandroidapp.data.network
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import retrofit2.Call
@@ -19,7 +18,7 @@ class PostsNetworkInteractor @Inject constructor(var apiClient: ApiClient) {
         return apiClient.getNextPageOfPosts(lastPostName)
     }
 
-    fun getUpdateError(): LiveData<Boolean>? {
+    fun getUpdateError(): LiveData<Boolean> {
         return updateError
     }
 

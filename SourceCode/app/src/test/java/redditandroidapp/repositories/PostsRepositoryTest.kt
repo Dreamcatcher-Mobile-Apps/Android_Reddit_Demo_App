@@ -58,7 +58,7 @@ class PostsRepositoryTest {
 
         // Prepare LiveData structure
         val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
-        postsEntityLiveData.setValue(fakePostEntitiesList);
+        postsEntityLiveData.setValue(fakePostEntitiesList)
 
         // Set testing conditions
         Mockito.`when`(postsDatabaseInteractor?.getAllPosts()).thenReturn(postsEntityLiveData)
@@ -67,7 +67,7 @@ class PostsRepositoryTest {
         val storedPosts = postsRepository?.getAllPosts(false)
 
         // Check results
-        Assert.assertSame(postsEntityLiveData, storedPosts);
+        Assert.assertSame(postsEntityLiveData, storedPosts)
     }
 
     @Test
@@ -75,7 +75,7 @@ class PostsRepositoryTest {
 
         // Prepare LiveData structure
         val postsEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postsEntityLiveData.setValue(fakePostDatabaseEntity);
+        postsEntityLiveData.setValue(fakePostDatabaseEntity)
 
         // Prepare fake post id
         val fakePostId = 0
@@ -88,6 +88,6 @@ class PostsRepositoryTest {
         val storedPost = postsRepository?.getSingleSavedPostById(fakePostId)
 
         // Check results
-        Assert.assertSame(postsEntityLiveData, storedPost);
+        Assert.assertSame(postsEntityLiveData, storedPost)
     }
 }
