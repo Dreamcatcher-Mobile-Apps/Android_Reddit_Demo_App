@@ -69,7 +69,7 @@ class PostsDatabaseInteractorTest {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postEntityLiveData.setValue(fakePostDatabaseEntity)
+        postEntityLiveData.value = fakePostDatabaseEntity
 
         // Set testing conditions
         Mockito.`when`(postsDatabase?.getPostsDao()).thenReturn(postsDao)
@@ -87,7 +87,7 @@ class PostsDatabaseInteractorTest {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
-        postEntityLiveData.setValue(listOf(fakePostDatabaseEntity!!))
+        postEntityLiveData.value = listOf(fakePostDatabaseEntity!!)
 
         // Set testing conditions
         Mockito.`when`(postsDatabase?.getPostsDao()).thenReturn(postsDao)

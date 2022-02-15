@@ -55,7 +55,7 @@ class FeedViewModelTest {
 
         // Prepare LiveData structure
         val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
-        postsEntityLiveData.setValue(fakePostEntitiesList)
+        postsEntityLiveData.value = fakePostEntitiesList
 
         // Set testing conditions
         Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(postsEntityLiveData)

@@ -6,7 +6,7 @@ import retrofit2.Call
 import javax.inject.Inject
 
 // Interactor used for communication with the external API
-class PostsNetworkInteractor @Inject constructor(var apiClient: ApiClient) {
+class PostsNetworkInteractor @Inject constructor(private val apiClient: ApiClient) {
 
     private val updateError: MutableLiveData<Boolean> = MutableLiveData()
 

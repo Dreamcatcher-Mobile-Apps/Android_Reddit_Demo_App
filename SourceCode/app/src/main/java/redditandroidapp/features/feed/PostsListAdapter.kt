@@ -11,7 +11,7 @@ import redditandroidapp.R
 import redditandroidapp.data.database.PostDatabaseEntity
 
 // Main adapter used for managing items list within the main RecyclerView (main feed listed)
-class PostsListAdapter (val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
+class PostsListAdapter (private val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ViewHolder>() {
 
     private var postsList: List<PostDatabaseEntity> = ArrayList()
 
@@ -23,12 +23,12 @@ class PostsListAdapter (val context: Context, val clickListener: (Int) -> Unit) 
         }
     }
 
-    fun addFreshPosts(newPostsList: List<PostDatabaseEntity>) {
+    private fun addFreshPosts(newPostsList: List<PostDatabaseEntity>) {
         this.postsList = newPostsList
         notifyDataSetChanged()
     }
 
-    fun addMorePosts(newPostsList: List<PostDatabaseEntity>) {
+    private fun addMorePosts(newPostsList: List<PostDatabaseEntity>) {
         val updateStartPoint = postsList.size
         val updateEndPoint = postsList.size + newPostsList.size - 1
         this.postsList = newPostsList

@@ -50,7 +50,7 @@ class DetailedViewViewModelTest {
 
         // Prepare LiveData structure
         val postEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postEntityLiveData.setValue(fakePostDatabaseEntity)
+        postEntityLiveData.value = fakePostDatabaseEntity
 
         // Prepare fake post id
         val fakePostId = 0

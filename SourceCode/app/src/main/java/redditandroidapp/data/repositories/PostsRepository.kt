@@ -34,7 +34,7 @@ class PostsRepository @Inject constructor(private val networkInteractor: PostsNe
         fetchMorePosts(lastPostName)
     }
 
-    fun subscribeForUpdateErrors(): LiveData<Boolean>? {
+    fun subscribeForUpdateErrors(): LiveData<Boolean> {
         return networkInteractor.getUpdateError()
     }
 

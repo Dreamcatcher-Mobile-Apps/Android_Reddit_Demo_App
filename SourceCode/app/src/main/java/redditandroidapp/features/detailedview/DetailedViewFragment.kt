@@ -8,11 +8,9 @@ import android.view.ViewGroup
 import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.detailed_view.*
 import redditandroidapp.R
-import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.data.network.NetworkConstants
 
 // Detailed view for displaying chosen item

@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.composethemeadapter.MdcTheme
@@ -24,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
-import redditandroidapp.data.database.PostDatabaseEntity
 import redditandroidapp.features.detailedview.DetailedViewFragment
 
 // Main ('feed') view
@@ -33,7 +31,7 @@ class FeedActivity : AppCompatActivity() {
 
     private val viewModel: FeedViewModel by viewModels()
     private lateinit var postsListAdapter: PostsListAdapter
-    var isLoadingMoreItems: Boolean = false
+    private var isLoadingMoreItems: Boolean = false
 
     private val STATE_LOADING_ERROR = "STATE_LOADING_ERROR"
     private val STATE_CONTENT_LOADED = "STATE_CONTENT_LOADED"

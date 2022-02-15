@@ -58,7 +58,7 @@ class PostsRepositoryTest {
 
         // Prepare LiveData structure
         val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
-        postsEntityLiveData.setValue(fakePostEntitiesList)
+        postsEntityLiveData.value = fakePostEntitiesList
 
         // Set testing conditions
         Mockito.`when`(postsDatabaseInteractor?.getAllPosts()).thenReturn(postsEntityLiveData)
@@ -75,7 +75,7 @@ class PostsRepositoryTest {
 
         // Prepare LiveData structure
         val postsEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postsEntityLiveData.setValue(fakePostDatabaseEntity)
+        postsEntityLiveData.value = fakePostDatabaseEntity
 
         // Prepare fake post id
         val fakePostId = 0
