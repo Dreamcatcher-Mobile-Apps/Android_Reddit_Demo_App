@@ -7,14 +7,14 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.composethemeadapter.MdcTheme
@@ -41,6 +41,13 @@ class FeedActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        app_title.setContent { MdcTheme { AppTitle() } }
+        loading_header.setContent { MdcTheme { LoadingHeader() } }
+        progressBar.setContent { MdcTheme { ProgressBar() } }
+        tryagain_button.setContent { MdcTheme { TryAgainButton(false) } }
+
+        // Todo: Fix the Try Again Button - it doesn't display!
+
         // Initialize RecyclerView (feed items)
         setupRecyclerView()
 
@@ -49,27 +56,49 @@ class FeedActivity : AppCompatActivity() {
 
         // Catch and handle potential update (e.g. network) issues
         subscribeForUpdateError()
-
-        app_title.setContent {
-            MdcTheme {
-                AppTitle()
-            }
-        }
     }
 
     @Composable
     private fun AppTitle() {
         Text(
             text = stringResource(R.string.app_name),
-            style = MaterialTheme.typography.h5,
-            modifier = Modifier.wrapContentWidth(Alignment.CenterHorizontally)
+            style = MaterialTheme.typography.h5
         )
+    }
+
+    @Composable
+    private fun LoadingHeader() {
+        Text(
+            text = stringResource(R.string.loading),
+            style = MaterialTheme.typography.h6,
+            modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp)
+        )
+    }
+
+    @Composable
+    private fun ProgressBar() {
+        CircularProgressIndicator(modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp))
+    }
+
+    @Composable
+    private fun TryAgainButton(isVisible: Boolean) {
+        if (isVisible) {
+            OutlinedButton(
+                onClick = { tryAgainButtonClicked() },
+                modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp)
+            ) {
+                Text(getString(R.string.try_again))
+            }
+        }
     }
 
     @Preview
     @Composable
     fun ComposablePreview() {
         AppTitle()
+        LoadingHeader()
+        CircularProgressIndicator()
+        TryAgainButton(true)
     }
 
     private fun setupRecyclerView() {
@@ -161,15 +190,16 @@ class FeedActivity : AppCompatActivity() {
         progressBar.visibility = View.INVISIBLE
 
         // Display "Try Again" button
-        tryagain_button.visibility = View.VISIBLE
+        tryagain_button.isVisible = true
+//        tryagain_button.visibility = View.VISIBLE
+    }
 
-        // Setup onClick listener that resets the feed data subscription
-        tryagain_button.setOnClickListener {
-            refreshPostsSubscription()
+    private fun tryAgainButtonClicked() {
+        // Reset the feed data subscription
+        refreshPostsSubscription()
 
-            // Re-display the loading progress bar (circle)
-            progressBar.visibility = View.VISIBLE
-        }
+        // Re-display the loading progress bar (circle)
+        progressBar.visibility = View.VISIBLE
     }
 
     private fun setupContentLoadedView() {

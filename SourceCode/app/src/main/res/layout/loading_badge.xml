@@ -13,31 +13,32 @@
 
     <androidx.compose.ui.platform.ComposeView
             android:id="@+id/app_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/loading_badge_internal_spacing"
-            android:text="@string/loading"
-            android:textSize="@dimen/loading_badge_text_size_medium"
-            android:textAlignment="center"/>
-
-    <ProgressBar
+    <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/loading_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    
+    <androidx.compose.ui.platform.ComposeView
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/loading_badge_progressbar_margin"/>
+            android:layout_height="wrap_content"/>
 
-    <Button
-            android:id="@+id/tryagain_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/loading_badge_progressbar_margin"
-            android:text="@string/try_again"
-            android:background="@drawable/background_badge"
-            android:elevation="@dimen/loading_badge_button_elevation"
-            android:visibility="invisible"/>
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/tryagain_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+<!--    <Button-->
+<!--            android:id="@+id/tryagain_button"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="@dimen/loading_badge_progressbar_margin"-->
+<!--            android:text="@string/try_again"-->
+<!--            android:background="@drawable/background_badge"-->
+<!--            android:elevation="@dimen/loading_badge_button_elevation"-->
+<!--            android:visibility="invisible"/>-->
 
 </LinearLayout>
