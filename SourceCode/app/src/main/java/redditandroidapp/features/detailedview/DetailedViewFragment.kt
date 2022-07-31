@@ -64,10 +64,6 @@ class DetailedViewFragment : Fragment() {
     }
 
     private fun showLoadingView(loadingState: Boolean) {
-        if (loadingState) {
-            progressBar.visibility = View.VISIBLE
-        } else {
-            progressBar.visibility = View.GONE
-        }
+        progressBar.visibility = if (!loadingState) View.GONE else View.VISIBLE
     }
 }
