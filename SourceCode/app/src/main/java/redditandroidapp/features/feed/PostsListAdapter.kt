@@ -1,6 +1,5 @@
 package redditandroidapp.features.feed
 
-import android.content.Context
 import android.view.ViewGroup
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,7 @@ import com.google.android.material.composethemeadapter.MdcTheme
 import redditandroidapp.data.database.PostDatabaseEntity
 
 // Main adapter used for managing items list within the main RecyclerView (main feed listed)
-class PostsListAdapter (private val context: Context, val clickListener: (Int) -> Unit) : RecyclerView.Adapter<ComposeViewHolder>() {
+class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
 
     private var postsList: List<PostDatabaseEntity> = ArrayList()
 
@@ -58,12 +57,6 @@ class PostsListAdapter (private val context: Context, val clickListener: (Int) -
         val urlToImage = postsList[position].thumbnail
 
         holder.bind(title, author, urlToImage)
-
-//        // Set onClickListener
-//        holder.rowContainer.setOnClickListener{
-//            val itemId = postsList[position].id
-//            clickListener(itemId)
-//        }
     }
 
     // Jetpack Compose requirement

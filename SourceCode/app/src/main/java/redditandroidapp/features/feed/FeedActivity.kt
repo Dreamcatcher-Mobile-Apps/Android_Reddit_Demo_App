@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
-import redditandroidapp.features.detailedview.DetailedViewFragment
 
 // Main ('feed') view
 @AndroidEntryPoint
@@ -104,9 +103,7 @@ class FeedActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         main_feed_recyclerview.layoutManager = layoutManager
-        postsListAdapter = PostsListAdapter(this) { postId: Int ->
-            displayDetailedView(postId)
-        }
+        postsListAdapter = PostsListAdapter()
         main_feed_recyclerview.adapter = postsListAdapter
         main_feed_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -124,13 +121,13 @@ class FeedActivity : AppCompatActivity() {
             isLoadingMoreItems = true
             val lastPostId = postsListAdapter.getLastPostId()
             lastPostId?.let {
-                viewModel.fetchMorePosts(it)
+                //viewModel.fetchMorePosts(it)
             }
         }
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.subscribeForPosts(true)?.observe(this) {
+        viewModel.subscribeForPosts()?.observe(this) {
 
             if (!it.isNullOrEmpty()) {
                 setViewState(STATE_CONTENT_LOADED)
@@ -164,18 +161,6 @@ class FeedActivity : AppCompatActivity() {
 
     private fun refreshPostsSubscription() {
         viewModel.refreshPosts()
-    }
-
-    private fun displayDetailedView(postId: Int) {
-        val fragment = DetailedViewFragment()
-        val bundle = Bundle()
-        bundle.putInt("postId", postId)
-        fragment.arguments = bundle
-
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.main_container, fragment)
-            .addToBackStack(null)
-            .commit()
     }
 
     private fun setViewState(state: String) {
