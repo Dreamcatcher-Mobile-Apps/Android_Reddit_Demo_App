@@ -1,9 +1,6 @@
 package redditandroidapp.data.database
 
-import androidx.room.PrimaryKey
-
-data class PostDatabaseEntity(
-        @PrimaryKey(autoGenerate = true) val id: Int = 0,
+data class RedditPostModel (
         val permalink: String?,
         val title: String?,
         val thumbnail: String?,

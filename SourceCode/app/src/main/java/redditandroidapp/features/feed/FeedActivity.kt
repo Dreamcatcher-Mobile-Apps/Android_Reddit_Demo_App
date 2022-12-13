@@ -141,22 +141,22 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun subscribeForUpdateError() {
-        viewModel.subscribeForUpdateErrors()?.observe(this) {
-
-            // Case of Network Error if no items have been cached
-            if (postsListAdapter.itemCount == 0) {
-                setViewState(STATE_LOADING_ERROR)
-            }
-
-            // Display error message to the user
-            Toast.makeText(
-                this,
-                R.string.network_problem_check_internet_connection,
-                Toast.LENGTH_LONG
-            ).show()
-
-            isLoadingMoreItems = false
-        }
+//        viewModel.subscribeForUpdateErrors()?.observe(this) {
+//
+//            // Case of Network Error if no items have been cached
+//            if (postsListAdapter.itemCount == 0) {
+//                setViewState(STATE_LOADING_ERROR)
+//            }
+//
+//            // Display error message to the user
+//            Toast.makeText(
+//                this,
+//                R.string.network_problem_check_internet_connection,
+//                Toast.LENGTH_LONG
+//            ).show()
+//
+//            isLoadingMoreItems = false
+//        }
     }
 
     private fun refreshPostsSubscription() {

@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView
 import coil.compose.rememberAsyncImagePainter
 import com.google.android.material.composethemeadapter.MdcTheme
-import redditandroidapp.data.database.PostDatabaseEntity
+import redditandroidapp.data.database.RedditPostModel
 
 // Main adapter used for managing items list within the main RecyclerView (main feed listed)
 class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
 
-    private var postsList: List<PostDatabaseEntity> = ArrayList()
+    private var postsList: List<RedditPostModel> = ArrayList()
 
-    fun setPosts(newPostsList: List<PostDatabaseEntity>) {
+    fun setPosts(newPostsList: List<RedditPostModel>) {
         if (newPostsList.size > this.postsList.size && this.postsList.isNotEmpty()) {
             addMorePosts(newPostsList)
         } else {
@@ -29,12 +29,12 @@ class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
         }
     }
 
-    private fun addFreshPosts(newPostsList: List<PostDatabaseEntity>) {
+    private fun addFreshPosts(newPostsList: List<RedditPostModel>) {
         this.postsList = newPostsList
         notifyDataSetChanged()
     }
 
-    private fun addMorePosts(newPostsList: List<PostDatabaseEntity>) {
+    private fun addMorePosts(newPostsList: List<RedditPostModel>) {
         val updateStartPoint = postsList.size
         val updateEndPoint = postsList.size + newPostsList.size - 1
         this.postsList = newPostsList

@@ -3,8 +3,7 @@ package redditandroidapp.repositories
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
 import redditandroidapp.data.database.PostsDatabaseInteractor
-import redditandroidapp.data.database.PostDatabaseEntity
-import redditandroidapp.data.network.PostsNetworkInteractor
+import redditandroidapp.data.database.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
 import org.junit.Assert
 import org.junit.Before
@@ -18,8 +17,8 @@ import org.mockito.MockitoAnnotations
 class PostsRepositoryTest {
 
     private var postsRepository: PostsRepository? = null
-    private var fakePostDatabaseEntity: PostDatabaseEntity? = null
-    private var fakePostEntitiesList = ArrayList<PostDatabaseEntity>()
+    private var fakeRedditPostModel: RedditPostModel? = null
+    private var fakePostEntitiesList = ArrayList<RedditPostModel>()
 
     @Mock
     private val postsDatabaseInteractor: PostsDatabaseInteractor? = null
@@ -47,17 +46,17 @@ class PostsRepositoryTest {
         val author = "fake/post/author"
 
         // Prepare fake Post Entity (DB object)
-        fakePostDatabaseEntity = PostDatabaseEntity(id, url, title, imageUrl, author, null)
+        fakeRedditPostModel = RedditPostModel(id, url, title, imageUrl, author, null)
 
         // Prepare fake Posts Entities List
-        fakePostEntitiesList.add(fakePostDatabaseEntity!!)
+        fakePostEntitiesList.add(fakeRedditPostModel!!)
     }
 
     @Test
     fun fetchAllPostsByPostsRepository() {
 
         // Prepare LiveData structure
-        val postsEntityLiveData = MutableLiveData<List<PostDatabaseEntity>>()
+        val postsEntityLiveData = MutableLiveData<List<RedditPostModel>>()
         postsEntityLiveData.value = fakePostEntitiesList
 
         // Set testing conditions
@@ -74,8 +73,8 @@ class PostsRepositoryTest {
     fun fetchSinglePostByPostsRepository() {
 
         // Prepare LiveData structure
-        val postsEntityLiveData = MutableLiveData<PostDatabaseEntity>()
-        postsEntityLiveData.value = fakePostDatabaseEntity
+        val postsEntityLiveData = MutableLiveData<RedditPostModel>()
+        postsEntityLiveData.value = fakeRedditPostModel
 
         // Prepare fake post id
         val fakePostId = 0

@@ -8,8 +8,8 @@ import retrofit2.http.Query
 interface ApiClient {
 
     @GET("/r/Android/hot.json")
-    fun getFreshPosts(): Call<PostsResponseGsonModel>
+    fun getFreshRedditPosts(): Call<PostsResponseGsonModel>
 
     @GET("/r/Android/hot.json")
-    fun getNextPageOfPosts(@Query("after") lastPostName: String): Call<PostsResponseGsonModel>
+    fun getNextPageOfRedditPosts(@Query("after") lastPostName: String): Call<PostsResponseGsonModel>
 }
