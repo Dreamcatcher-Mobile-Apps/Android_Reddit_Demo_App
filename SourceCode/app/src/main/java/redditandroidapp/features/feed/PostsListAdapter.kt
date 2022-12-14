@@ -27,10 +27,8 @@ class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
     }
 
     fun addMorePosts(newPostsList: List<RedditPostModel>) {
-        val updateStartPoint = postsList.size
-        val updateEndPoint = postsList.size + newPostsList.size - 1
         this.postsList = this.postsList.plus(newPostsList)
-        notifyItemRangeInserted(updateStartPoint, updateEndPoint)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount(): Int {

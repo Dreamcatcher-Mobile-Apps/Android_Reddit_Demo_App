@@ -30,6 +30,7 @@ import redditandroidapp.data.database.RedditPostModel
 class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
     private val viewModel: FeedViewModel by viewModels()
+
     private lateinit var postsListAdapter: PostsListAdapter
     private var isLoadingMoreItems: Boolean = false
 
@@ -42,16 +43,24 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         setContentView(R.layout.activity_main)
 
         // Initialize Jetpack Compose UI.
-        app_title.setContent { MdcTheme { AppTitle() } }
-        loading_header.setContent { MdcTheme { LoadingHeader() } }
-        progressBar.setContent { MdcTheme { ProgressBar() } }
-        tryagain_button.setContent { MdcTheme { TryAgainButton(false) } }
+        setupJetpackComposeUI()
 
         // Initialize RecyclerView (feed items)
         setupRecyclerView()
 
         // Fetch feed items from the back-end and load them into the view
         subscribeForFeedItems()
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Jetpack Compose UI functions:
+
+    private fun setupJetpackComposeUI() {
+        app_title.setContent { MdcTheme { AppTitle() } }
+        loading_header.setContent { MdcTheme { LoadingHeader() } }
+        progressBar.setContent { MdcTheme { ProgressBar(true) } }
+        tryagain_button.setContent { MdcTheme { TryAgainButton(false) } }
     }
 
     @Composable
@@ -72,8 +81,10 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     @Composable
-    private fun ProgressBar() {
-        CircularProgressIndicator(modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp))
+    private fun ProgressBar(isVisible: Boolean) {
+        if (isVisible) {
+            CircularProgressIndicator(modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp))
+        }
     }
 
     @Composable
@@ -97,6 +108,9 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         TryAgainButton(true)
     }
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     private fun setupRecyclerView() {
         val layoutManager = LinearLayoutManager(this)
         main_feed_recyclerview.layoutManager = layoutManager
@@ -112,6 +126,14 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         })
     }
 
+    private fun subscribeForFeedItems() {
+        viewModel.subscribeForPosts(this)
+    }
+
+    private fun refreshPostsSubscription() {
+        viewModel.refreshPosts(this)
+    }
+
     private fun loadMoreItems() {
         if (!isLoadingMoreItems) {
             isLoadingMoreItems = true
@@ -124,14 +146,6 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         }
     }
 
-    private fun subscribeForFeedItems() {
-        viewModel.subscribeForPosts(this)
-    }
-
-    private fun refreshPostsSubscription() {
-        viewModel.refreshPosts(this)
-    }
-
     private fun setViewState(state: String) {
         when(state) {
             STATE_LOADING_ERROR -> setupLoadingErrorView()
@@ -141,10 +155,9 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
     private fun setupLoadingErrorView() {
         // Stop the loading progress bar (circle)
-        progressBar.visibility = View.INVISIBLE
+        progressBar.setContent { MdcTheme { ProgressBar(false) } }
 
         // Display "Try Again" button
-        // Todo: Ensure whether is it a good way in Jetpack Compose to 'refresh' the UI element?
         tryagain_button.setContent { MdcTheme { TryAgainButton(true) } }
     }
 
@@ -153,7 +166,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         refreshPostsSubscription()
 
         // Re-display the loading progress bar (circle)
-        progressBar.visibility = View.VISIBLE
+        progressBar.setContent { MdcTheme { ProgressBar(true) } }
     }
 
     private fun setupContentLoadedView() {

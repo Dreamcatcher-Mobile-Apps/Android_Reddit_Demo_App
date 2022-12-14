@@ -6,7 +6,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import redditandroidapp.data.network.ApiClient
 import redditandroidapp.data.network.NetworkAdapter
-import redditandroidapp.data.repositories.PostsRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
