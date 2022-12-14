@@ -63,7 +63,7 @@ class PostsRepositoryTest {
         Mockito.`when`(postsDatabaseInteractor?.getAllPosts()).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedPosts = postsRepository?.getAllPosts(false)
+        val storedPosts = postsRepository?.getRedditPosts(false)
 
         // Check results
         Assert.assertSame(postsEntityLiveData, storedPosts)

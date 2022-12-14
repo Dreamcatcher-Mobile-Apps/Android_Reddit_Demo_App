@@ -58,10 +58,10 @@ class FeedViewModelTest {
         postsEntityLiveData.value = fakePostEntitiesList
 
         // Set testing conditions
-        Mockito.`when`(postsRepository?.getAllPosts(false)).thenReturn(postsEntityLiveData)
+        Mockito.`when`(postsRepository?.getRedditPosts(false)).thenReturn(postsEntityLiveData)
 
         // Perform the action
-        val storedPosts = viewModel?.subscribeForPosts(false)
+        val storedPosts = viewModel?.fetchRedditPostsFromServer(false)
 
         // Check results
         Assert.assertSame(postsEntityLiveData, storedPosts)

@@ -50,7 +50,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         setupRecyclerView()
 
         // Fetch feed items from the back-end and load them into the view
-        subscribeForFeedItems()
+        fetchRedditPostsFromServer()
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,12 +120,12 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         })
     }
 
-    private fun subscribeForFeedItems() {
-        viewModel.subscribeForPosts(this)
+    private fun fetchRedditPostsFromServer() {
+        viewModel.fetchRedditPostsFromServer(this)
     }
 
     private fun refreshPostsSubscription() {
-        viewModel.refreshPosts(this)
+        viewModel.fetchRefreshedRedditPostsFromServer(this)
     }
 
     private fun loadMoreItems() {
@@ -136,7 +136,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
             lastPostId?.let {
                 val lastPostId = it
                 val callback = this
-                viewModel.fetchMorePosts(callback, lastPostId)
+                viewModel.fetchMoreRedditPostsFromServer(callback, lastPostId)
             }
         }
     }
@@ -222,11 +222,13 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     override fun redditPostsFetchingError() {
-        // Todo: Improve.
-        // Case of Network Error if no items have been cached
-        if (postsListAdapter.itemCount == 0) setViewState(STATE_INITIAL_LOADING_ERROR)
-        else setViewState(STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED)
+        if (isListContentAlreadyLoaded()) setViewState(STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED)
+        else setViewState(STATE_INITIAL_LOADING_ERROR)
 
         isLoadingMoreItemsInProgress = false
+    }
+
+    private fun isListContentAlreadyLoaded(): Boolean {
+        return postsListAdapter.itemCount > 0
     }
 }

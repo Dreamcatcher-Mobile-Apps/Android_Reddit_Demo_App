@@ -13,7 +13,7 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    fun getAllPosts(callback: RedditPostsFetchingInterface, lastPostName: String?, refreshPostsTriggered: Boolean) {
+    fun getRedditPosts(callback: RedditPostsFetchingInterface, lastPostName: String?, refreshPostsTriggered: Boolean) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
 
