@@ -23,10 +23,11 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
+import redditandroidapp.data.database.RedditPostModel
 
 // Main ('feed') view
 @AndroidEntryPoint
-class FeedActivity : AppCompatActivity() {
+class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
     private val viewModel: FeedViewModel by viewModels()
     private lateinit var postsListAdapter: PostsListAdapter
@@ -52,9 +53,6 @@ class FeedActivity : AppCompatActivity() {
 
         // Fetch feed items from the back-end and load them into the view
         subscribeForFeedItems()
-
-        // Catch and handle potential update (e.g. network) issues
-        subscribeForUpdateError()
     }
 
     @Composable
@@ -127,40 +125,11 @@ class FeedActivity : AppCompatActivity() {
     }
 
     private fun subscribeForFeedItems() {
-        viewModel.subscribeForPosts()?.observe(this) {
-
-            if (!it.isNullOrEmpty()) {
-                setViewState(STATE_CONTENT_LOADED)
-
-                // Display fetched items
-                postsListAdapter.setPosts(it)
-            }
-
-            isLoadingMoreItems = false
-        }
-    }
-
-    private fun subscribeForUpdateError() {
-//        viewModel.subscribeForUpdateErrors()?.observe(this) {
-//
-//            // Case of Network Error if no items have been cached
-//            if (postsListAdapter.itemCount == 0) {
-//                setViewState(STATE_LOADING_ERROR)
-//            }
-//
-//            // Display error message to the user
-//            Toast.makeText(
-//                this,
-//                R.string.network_problem_check_internet_connection,
-//                Toast.LENGTH_LONG
-//            ).show()
-//
-//            isLoadingMoreItems = false
-//        }
+        viewModel.subscribeForPosts(this)
     }
 
     private fun refreshPostsSubscription() {
-        viewModel.refreshPosts()
+        viewModel.refreshPosts(this)
     }
 
     private fun setViewState(state: String) {
@@ -196,5 +165,34 @@ class FeedActivity : AppCompatActivity() {
         btn_refresh.setOnClickListener{
             refreshPostsSubscription()
         }
+    }
+
+    // RedditPostsFetchingInterface Functions
+
+    override fun redditPostsFetchedSuccessfully(list: List<RedditPostModel>) {
+        if (!list.isNullOrEmpty()) {
+            setViewState(STATE_CONTENT_LOADED)
+
+            // Display fetched items
+            postsListAdapter.setPosts(list)
+        }
+
+        isLoadingMoreItems = false
+    }
+
+    override fun redditPostsFetchingError() {
+        // Case of Network Error if no items have been cached
+        if (postsListAdapter.itemCount == 0) {
+            setViewState(STATE_LOADING_ERROR)
+        }
+
+        // Display error message to the user
+        Toast.makeText(
+            this,
+            R.string.network_problem_check_internet_connection,
+            Toast.LENGTH_LONG
+            ).show()
+
+        isLoadingMoreItems = false
     }
 }
