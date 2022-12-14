@@ -11,14 +11,14 @@ class FeedViewModel @Inject constructor(private val postsRepository: PostsReposi
     : ViewModel(), LifecycleObserver {
 
     fun subscribeForPosts(callback: RedditPostsFetchingInterface) {
-        return postsRepository.getAllPosts(callback, null)
+        return postsRepository.getAllPosts(callback, null, false)
     }
 
     fun refreshPosts(callback: RedditPostsFetchingInterface) {
-        return postsRepository.getAllPosts(callback, null)
+        return postsRepository.getAllPosts(callback, null, true)
     }
 
-//    fun fetchMorePosts(lastPostName: String): LiveData<List<PostDatabaseEntity>>? {
-//        return postsRepository.fetchMorePosts(lastPostName)
-//    }
+    fun fetchMorePosts(callback: RedditPostsFetchingInterface, lastPostName: String) {
+        return postsRepository.getAllPosts(callback, lastPostName, false)
+    }
 }

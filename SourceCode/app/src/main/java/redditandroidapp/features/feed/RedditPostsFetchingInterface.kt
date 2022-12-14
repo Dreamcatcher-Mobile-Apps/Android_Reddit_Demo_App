@@ -6,6 +6,8 @@ interface RedditPostsFetchingInterface {
 
     fun redditPostsFetchedSuccessfully(list: List<RedditPostModel>)
 
+    fun redditPostsRefreshedSuccessfully(list: List<RedditPostModel>)
+
     fun redditPostsFetchingError()
 
 }

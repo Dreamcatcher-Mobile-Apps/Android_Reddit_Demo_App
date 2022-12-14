@@ -41,12 +41,11 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize Jetpack Compose UI.
         app_title.setContent { MdcTheme { AppTitle() } }
         loading_header.setContent { MdcTheme { LoadingHeader() } }
         progressBar.setContent { MdcTheme { ProgressBar() } }
         tryagain_button.setContent { MdcTheme { TryAgainButton(false) } }
-
-        // Todo: Fix the Try Again Button - it doesn't display!
 
         // Initialize RecyclerView (feed items)
         setupRecyclerView()
@@ -106,7 +105,6 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         main_feed_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-
                 if (layoutManager.findLastVisibleItemPosition() + 1 == postsListAdapter.itemCount) {
                     loadMoreItems()
                 }
@@ -119,7 +117,9 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
             isLoadingMoreItems = true
             val lastPostId = postsListAdapter.getLastPostId()
             lastPostId?.let {
-                //viewModel.fetchMorePosts(it)
+                val lastPostId = it
+                val callback = this
+                viewModel.fetchMorePosts(callback, lastPostId)
             }
         }
     }
@@ -144,8 +144,8 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         progressBar.visibility = View.INVISIBLE
 
         // Display "Try Again" button
-        tryagain_button.isVisible = true
-//        tryagain_button.visibility = View.VISIBLE
+        // Todo: Ensure whether is it a good way in Jetpack Compose to 'refresh' the UI element?
+        tryagain_button.setContent { MdcTheme { TryAgainButton(true) } }
     }
 
     private fun tryAgainButtonClicked() {
@@ -174,7 +174,18 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
             setViewState(STATE_CONTENT_LOADED)
 
             // Display fetched items
-            postsListAdapter.setPosts(list)
+            postsListAdapter.addMorePosts(list)
+        }
+
+        isLoadingMoreItems = false
+    }
+
+    override fun redditPostsRefreshedSuccessfully(list: List<RedditPostModel>) {
+        if (!list.isNullOrEmpty()) {
+            setViewState(STATE_CONTENT_LOADED)
+
+            // Display fetched items
+            postsListAdapter.addFreshPosts(list)
         }
 
         isLoadingMoreItems = false

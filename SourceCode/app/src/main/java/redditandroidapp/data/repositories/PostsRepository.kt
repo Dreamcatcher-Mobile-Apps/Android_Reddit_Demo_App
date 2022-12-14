@@ -13,22 +13,19 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    fun getAllPosts(callback: RedditPostsFetchingInterface, lastPostName: String?) {
-        val endpoint = if (lastPostName == null) {
-            apiClient.getFreshRedditPosts()
-        } else {
-            apiClient.getNextPageOfRedditPosts(lastPostName)
-        }
+    fun getAllPosts(callback: RedditPostsFetchingInterface, lastPostName: String?, refreshPostsTriggered: Boolean) {
+        val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
+        else apiClient.getNextPageOfRedditPosts(lastPostName)
+
         endpoint.enqueue(object: Callback<PostsResponseGsonModel> {
 
             override fun onResponse(call: Call<PostsResponseGsonModel>?, response: Response<PostsResponseGsonModel>?) {
-
                 response?.body()?.data?.childrenPosts?.let {
                     val receivedList = it
                     val transformedList = transformReceivedRedditPostsList(receivedList)
-                    callback.redditPostsFetchedSuccessfully(transformedList)
+                    if (refreshPostsTriggered) callback.redditPostsRefreshedSuccessfully(transformedList)
+                    else callback.redditPostsFetchedSuccessfully(transformedList)
                 }
-
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>?, t: Throwable?) {

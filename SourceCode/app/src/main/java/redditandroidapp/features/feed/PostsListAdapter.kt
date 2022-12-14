@@ -21,23 +21,15 @@ class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
 
     private var postsList: List<RedditPostModel> = ArrayList()
 
-    fun setPosts(newPostsList: List<RedditPostModel>) {
-        if (newPostsList.size > this.postsList.size && this.postsList.isNotEmpty()) {
-            addMorePosts(newPostsList)
-        } else {
-            addFreshPosts(newPostsList)
-        }
-    }
-
-    private fun addFreshPosts(newPostsList: List<RedditPostModel>) {
+    fun addFreshPosts(newPostsList: List<RedditPostModel>) {
         this.postsList = newPostsList
         notifyDataSetChanged()
     }
 
-    private fun addMorePosts(newPostsList: List<RedditPostModel>) {
+    fun addMorePosts(newPostsList: List<RedditPostModel>) {
         val updateStartPoint = postsList.size
         val updateEndPoint = postsList.size + newPostsList.size - 1
-        this.postsList = newPostsList
+        this.postsList = this.postsList.plus(newPostsList)
         notifyItemRangeInserted(updateStartPoint, updateEndPoint)
     }
 
