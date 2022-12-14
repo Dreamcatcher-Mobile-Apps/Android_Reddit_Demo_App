@@ -33,9 +33,6 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     private lateinit var postsListAdapter: PostsListAdapter
     private var isLoadingMoreItemsInProgress: Boolean = false
 
-    // Todo: To be removed.
-    private val STATE_LOADING_ERROR = "STATE_LOADING_ERROR"
-
     private val STATE_INITIAL_LOADING_IN_PROGRESS = "STATE_INITIAL_LOADING_IN_PROGRESS"
     private val STATE_INITIAL_LOADING_ERROR = "STATE_INITIAL_LOADING_ERROR"
     private val STATE_LIST_CONTENT_LOADED_SUCCESSFULLY = "STATE_LIST_CONTENT_LOADED_SUCCESSFULLY"
@@ -146,32 +143,10 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
     private fun setViewState(state: String) {
         when(state) {
-            STATE_LOADING_ERROR -> setupLoadingErrorView()
-
             STATE_INITIAL_LOADING_IN_PROGRESS -> setupInitialLoadingInProgressView()
             STATE_INITIAL_LOADING_ERROR -> setupInitialLoadingErrorView()
             STATE_LIST_CONTENT_LOADED_SUCCESSFULLY -> setupListContentLoadedSuccessfullyView()
             STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED -> setupErrorOccursWhenListContentIsLoadedView()
-        }
-    }
-
-    private fun setupLoadingErrorView() {
-        // Stop the loading progress bar (circle)
-        progressBar.setContent { MdcTheme { ProgressBar(false) } }
-
-        // Display "Try Again" button
-        tryagain_button.setContent { MdcTheme { TryAgainButton(true) } }
-    }
-
-    private fun setupContentLoadedView() {
-        // Hide the loading view. We hide one big container with our "Loading view" here,
-        // and make the other big container (that will hold our list) visible.
-        loading_container.visibility = View.GONE
-        appbar_container.visibility = View.VISIBLE
-
-        // Setup refresh button
-        btn_refresh.setOnClickListener{
-            refreshPostsSubscription()
         }
     }
 
@@ -190,7 +165,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         tryagain_button.setContent { MdcTheme { TryAgainButton(true) } }
 
         // Display error message to the user
-        Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_LONG).show()
+        displayToastErrorMessageToTheUser()
     }
 
     private fun setupListContentLoadedSuccessfullyView() {
@@ -207,7 +182,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
     private fun setupErrorOccursWhenListContentIsLoadedView() {
         // Display error message to the user
-        Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_LONG).show()
+        displayToastErrorMessageToTheUser()
     }
 
     private fun tryAgainButtonClicked() {
@@ -216,6 +191,10 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
 
         // Re-display the loading progress bar (circle)
         progressBar.setContent { MdcTheme { ProgressBar(true) } }
+    }
+
+    private fun displayToastErrorMessageToTheUser() {
+        Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_SHORT).show()
     }
 
     // RedditPostsFetchingInterface Functions
@@ -243,13 +222,10 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     override fun redditPostsFetchingError() {
+        // Todo: Improve.
         // Case of Network Error if no items have been cached
-        if (postsListAdapter.itemCount == 0) {
-            setViewState(STATE_LOADING_ERROR)
-        }
-
-        // Display error message to the user
-        Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_LONG).show()
+        if (postsListAdapter.itemCount == 0) setViewState(STATE_INITIAL_LOADING_ERROR)
+        else setViewState(STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED)
 
         isLoadingMoreItemsInProgress = false
     }

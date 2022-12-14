@@ -22,15 +22,6 @@
 
     <dimen name="feed_view_padding_vertical">15dp</dimen>
 
-    <dimen name="detailed_view_elevation">10dp</dimen>
-    <dimen name="detailed_view_vertical_extra_spacing">50dp</dimen>
-    <dimen name="detailed_view_padding_horizontal">20dp</dimen>
-    <dimen name="detailed_view_padding_top">30dp</dimen>
-    <dimen name="detailed_view_padding_bottom">10dp</dimen>
-    <dimen name="detailed_view_webview_margin">15dp</dimen>
-    <dimen name="detailed_view_cross_button_length">30dp</dimen>
-    <dimen name="detailed_view_cross_button_margin">10dp</dimen>
-
     <dimen name="loading_badge_elevation">3dp</dimen>
     <dimen name="loading_badge_button_elevation">10dp</dimen>
     <dimen name="loading_badge_text_size_medium">18sp</dimen>

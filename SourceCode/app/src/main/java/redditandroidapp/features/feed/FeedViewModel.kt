@@ -10,6 +10,8 @@ import javax.inject.Inject
 class FeedViewModel @Inject constructor(private val postsRepository: PostsRepository)
     : ViewModel(), LifecycleObserver {
 
+    // Todo: Make these names more self-descriptive.
+
     fun subscribeForPosts(callback: RedditPostsFetchingInterface) {
         return postsRepository.getAllPosts(callback, null, false)
     }

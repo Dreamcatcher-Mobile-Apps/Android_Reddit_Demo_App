@@ -46,13 +46,12 @@ class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {
         val author = postsList[position].author
         val urlToImage = postsList[position].thumbnail
 
+        // Display prepared data
         holder.bind(title, author, urlToImage)
     }
 
     // Jetpack Compose requirement
     override fun onViewRecycled(holder: ComposeViewHolder) {
-        // Dispose the underlying Composition of the ComposeView
-        // when RecyclerView has recycled this ViewHolder
         holder.view.disposeComposition()
     }
 
