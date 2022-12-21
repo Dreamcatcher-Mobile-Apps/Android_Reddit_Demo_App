@@ -1,6 +1,6 @@
 package redditandroidapp.features.feed
 
-import redditandroidapp.data.database.RedditPostModel
+import redditandroidapp.data.models.RedditPostModel
 
 interface RedditPostsFetchingInterface {
 

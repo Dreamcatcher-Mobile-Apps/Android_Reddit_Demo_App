@@ -4,10 +4,15 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,13 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.compose.rememberAsyncImagePainter
 import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
-import redditandroidapp.data.database.RedditPostModel
+import redditandroidapp.data.models.RedditPostModel
 
 // Main ('feed') view
 @AndroidEntryPoint
@@ -36,12 +42,13 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     private val STATE_INITIAL_LOADING_IN_PROGRESS = "STATE_INITIAL_LOADING_IN_PROGRESS"
     private val STATE_INITIAL_LOADING_ERROR = "STATE_INITIAL_LOADING_ERROR"
     private val STATE_LIST_CONTENT_LOADED_SUCCESSFULLY = "STATE_LIST_CONTENT_LOADED_SUCCESSFULLY"
-    private val STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED = "STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED"
+    private val STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED =
+        "STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED"
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+//        setContentView(R.layout.activity_main)
 
         // Initialize UI
         setViewState(STATE_INITIAL_LOADING_IN_PROGRESS)
@@ -89,6 +96,31 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
                 modifier = Modifier.padding(0.dp, 30.dp, 0.dp, 0.dp)
             ) {
                 Text(getString(R.string.try_again))
+            }
+        }
+    }
+
+    @Composable
+    private fun PostsList(modifier: Modifier = Modifier, posts: List<RedditPostModel>) {
+        // Use LazyRow when making horizontal lists
+        LazyColumn(modifier = modifier) {
+            items(posts.size) { index ->
+                PostsListItem(posts[index])
+            }
+        }
+    }
+
+    @Composable
+    private fun PostsListItem(post: RedditPostModel) {
+        Column {
+            post.link?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = null,
+                    modifier = Modifier.size(128.dp)
+                )
+                post.title?.let { Text(text = it, style = MaterialTheme.typography.subtitle1) }
+                post.author?.let { Text(text = it, style = MaterialTheme.typography.subtitle2) }
             }
         }
     }
@@ -142,7 +174,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     private fun setViewState(state: String) {
-        when(state) {
+        when (state) {
             STATE_INITIAL_LOADING_IN_PROGRESS -> setupInitialLoadingInProgressView()
             STATE_INITIAL_LOADING_ERROR -> setupInitialLoadingErrorView()
             STATE_LIST_CONTENT_LOADED_SUCCESSFULLY -> setupListContentLoadedSuccessfullyView()
@@ -175,7 +207,7 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         appbar_container.visibility = View.VISIBLE
 
         // Setup refresh button
-        btn_refresh.setOnClickListener{
+        btn_refresh.setOnClickListener {
             refreshPostsSubscription()
         }
     }
@@ -194,7 +226,11 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     private fun displayToastErrorMessageToTheUser() {
-        Toast.makeText(this, R.string.network_problem_check_internet_connection, Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            this,
+            R.string.network_problem_check_internet_connection,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     // RedditPostsFetchingInterface Functions
@@ -204,7 +240,10 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
             setViewState(STATE_LIST_CONTENT_LOADED_SUCCESSFULLY)
 
             // Display fetched items
-            postsListAdapter.addMorePosts(list)
+            setContent {
+                PostsList(posts = list)
+            }
+//            postsListAdapter.addMorePosts(list)
         }
 
         isLoadingMoreItemsInProgress = false
@@ -222,7 +261,9 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     override fun redditPostsFetchingError() {
-        if (isListContentAlreadyLoaded()) setViewState(STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED)
+        if (isListContentAlreadyLoaded()) setViewState(
+            STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED
+        )
         else setViewState(STATE_INITIAL_LOADING_ERROR)
 
         isLoadingMoreItemsInProgress = false
@@ -232,3 +273,4 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
         return postsListAdapter.itemCount > 0
     }
 }
+

@@ -2,8 +2,8 @@ package redditandroidapp.repositories
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import redditandroidapp.data.database.PostsDatabaseInteractor
-import redditandroidapp.data.database.RedditPostModel
+import redditandroidapp.data.models.PostsDatabaseInteractor
+import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
 import org.junit.Assert
 import org.junit.Before

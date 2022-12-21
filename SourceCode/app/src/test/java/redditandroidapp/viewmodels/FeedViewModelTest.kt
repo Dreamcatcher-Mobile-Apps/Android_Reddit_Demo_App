@@ -2,7 +2,7 @@ package redditandroidapp.viewmodels
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.MutableLiveData
-import redditandroidapp.data.database.RedditPostModel
+import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
 import redditandroidapp.features.feed.FeedViewModel
 import org.junit.Assert

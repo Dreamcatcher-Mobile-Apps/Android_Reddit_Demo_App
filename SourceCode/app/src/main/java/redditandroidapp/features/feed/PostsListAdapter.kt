@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView
 import coil.compose.rememberAsyncImagePainter
 import com.google.android.material.composethemeadapter.MdcTheme
-import redditandroidapp.data.database.RedditPostModel
+import redditandroidapp.data.models.RedditPostModel
 
 // Main adapter used for managing items list within the main RecyclerView (main feed listed)
 class PostsListAdapter : RecyclerView.Adapter<ComposeViewHolder>() {

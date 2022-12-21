@@ -1,4 +1,4 @@
-package redditandroidapp.data.database
+package redditandroidapp.data.models
 
 data class RedditPostModel (
         val link: String?,
@@ -7,4 +7,3 @@ data class RedditPostModel (
         val author: String?,
         val name: String?
 )
-
