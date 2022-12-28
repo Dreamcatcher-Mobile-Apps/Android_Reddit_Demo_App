@@ -9,9 +9,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -101,9 +99,9 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     }
 
     @Composable
-    private fun PostsList(modifier: Modifier = Modifier, posts: List<RedditPostModel>) {
+    private fun PostsList(posts: List<RedditPostModel>) {
         // Use LazyRow when making horizontal lists
-        LazyColumn(modifier = modifier) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(posts.size) { index ->
                 PostsListItem(posts[index])
             }
@@ -113,11 +111,11 @@ class FeedActivity : AppCompatActivity(), RedditPostsFetchingInterface {
     @Composable
     private fun PostsListItem(post: RedditPostModel) {
         Column {
-            post.link?.let {
+            post.link?.let { it ->
                 Image(
                     painter = rememberAsyncImagePainter(it),
                     contentDescription = null,
-                    modifier = Modifier.size(128.dp)
+                    modifier = Modifier.fillMaxWidth()
                 )
                 post.title?.let { Text(text = it, style = MaterialTheme.typography.subtitle1) }
                 post.author?.let { Text(text = it, style = MaterialTheme.typography.subtitle2) }

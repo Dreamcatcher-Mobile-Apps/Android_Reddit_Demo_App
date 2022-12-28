@@ -14,14 +14,26 @@
             android:theme="@style/AppTheme"
             android:usesCleartextTraffic="true">
 
-        <activity
-            android:name="redditandroidapp.features.feed.FeedActivity"
-            android:exported="true">
+        <activity android:name ="redditandroidapp.features.feed.MainActivity"
+            android:exported="true"
+            android:label = "@string/title_activity_main"
+            android:theme = "@style/AppTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <meta-data android:name="android.app.lib_name" android:value="" />
         </activity>
+
+<!--        <activity-->
+<!--            android:name="redditandroidapp.features.feed.FeedActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN"/>-->
+<!--                <category android:name="android.intent.category.LAUNCHER"/>-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
 
     </application>
 
