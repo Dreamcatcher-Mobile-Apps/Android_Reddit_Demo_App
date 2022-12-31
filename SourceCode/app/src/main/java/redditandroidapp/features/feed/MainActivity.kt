@@ -209,16 +209,3 @@ private fun PostsListItem(post: RedditPostModel) {
         }
     }
 }
-
-private fun mockPosts(): List<RedditPostModel> {
-    val post = RedditPostModel(
-        title = "Pankracy gra na fujarce",
-        thumbnail = "https://ocdn.eu/pulscms-transforms/1/zCmk9kpTURBXy80MzJjZTZkZDFiNjZiOTU2MWM2NTMyNDJlNDVkZjYyNC5qcGeTlQMABs0BLMyokwmmYmE4MDJiBpMFzQSwzQJ23gABoTAB/pankracy-fot-maciej-wasielewski-tvn24pl.jpg",
-        author = "Pankracy",
-        link = null,
-        name = "Pankracy gra na gitarce"
-    )
-    return listOf(
-        post, post, post
-    )
-}
