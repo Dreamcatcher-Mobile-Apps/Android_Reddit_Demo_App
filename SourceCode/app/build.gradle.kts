@@ -60,11 +60,8 @@ dependencies {
 
     // AndroidX
     implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.core:core-ktx:1.8.0-alpha03")
-    implementation("androidx.fragment:fragment-ktx:1.4.1")
     implementation("androidx.activity:activity-compose:1.4.0")
     implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-alpha02")
     implementation("androidx.lifecycle:lifecycle-common-java8:2.4.1")
 
     // Jetpack Compose
@@ -77,7 +74,6 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.0.0-alpha02")
     implementation("androidx.compose.runtime:runtime-livedata:1.1.0")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.1.0")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.1.0")
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
@@ -90,7 +86,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.test:rules:1.4.0")
-    testImplementation("org.hamcrest:hamcrest-all:1.3")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.8.1")
@@ -98,7 +93,6 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.3.0")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
 
     // Coil (Jetpack Compose pictures loading)
