@@ -1,7 +1,6 @@
 package redditandroidapp.features.feed
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -10,23 +9,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.google.android.material.composethemeadapter.MdcTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.appbar.*
 import kotlinx.android.synthetic.main.loading_badge.*
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
-import redditandroidapp.features.feed.ui.theme.SourceCodeTheme
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity(), RedditPostsFetchingInterface  {
+class MainActivityOld : ComponentActivity(), RedditPostsFetchingInterface  {
     private val viewModel: FeedViewModel by viewModels()
     private var isLoadingMoreItemsInProgress: Boolean = false
 

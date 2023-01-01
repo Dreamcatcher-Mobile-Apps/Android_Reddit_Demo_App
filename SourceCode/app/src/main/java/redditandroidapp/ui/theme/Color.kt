@@ -1,4 +1,4 @@
-package redditandroidapp.features.feed.ui.theme
+package redditandroidapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
