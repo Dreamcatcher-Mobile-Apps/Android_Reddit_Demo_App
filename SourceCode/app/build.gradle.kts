@@ -55,25 +55,25 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.42")
 
     // Google Material IO
-    implementation("com.google.android.material:material:1.5.0")
-    implementation("com.google.android.material:compose-theme-adapter:1.1.3")
+    implementation("com.google.android.material:material:1.7.0")
+    implementation("com.google.android.material:compose-theme-adapter:1.2.1")
 
     // AndroidX
-    implementation("androidx.appcompat:appcompat:1.4.1")
-    implementation("androidx.activity:activity-compose:1.4.0")
-    implementation("androidx.activity:activity-ktx:1.4.0")
-    implementation("androidx.lifecycle:lifecycle-common-java8:2.4.1")
+    implementation("androidx.appcompat:appcompat:1.5.1")
+    implementation("androidx.activity:activity-compose:1.6.1")
+    implementation("androidx.activity:activity-ktx:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-common-java8:2.5.1")
 
     // Jetpack Compose
-    implementation("androidx.compose.ui:ui:1.1.0")
-    implementation("androidx.compose.ui:ui-tooling:1.1.0")
-    implementation("androidx.compose.foundation:foundation:1.1.0")
-    implementation("androidx.compose.material:material:1.1.0")
-    implementation("androidx.compose.material:material-icons-core:1.1.0")
-    implementation("androidx.compose.material:material-icons-extended:1.1.0")
-    implementation("androidx.compose.material3:material3:1.0.0-alpha02")
-    implementation("androidx.compose.runtime:runtime-livedata:1.1.0")
-    implementation("androidx.compose.runtime:runtime-rxjava2:1.1.0")
+    implementation("androidx.compose.ui:ui:1.3.2")
+    implementation("androidx.compose.ui:ui-tooling:1.3.2")
+    implementation("androidx.compose.foundation:foundation:1.3.1")
+    implementation("androidx.compose.material:material:1.3.1")
+    implementation("androidx.compose.material:material-icons-core:1.3.1")
+    implementation("androidx.compose.material:material-icons-extended:1.3.1")
+    implementation("androidx.compose.material3:material3:1.1.0-alpha03")
+    implementation("androidx.compose.runtime:runtime-livedata:1.3.2")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.3.2")
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
@@ -82,10 +82,10 @@ dependencies {
     testImplementation("android.arch.core:core-testing:1.1.1")
 
     // UI Testing
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.4.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.4.0")
-    androidTestImplementation("androidx.test:runner:1.4.0")
-    androidTestImplementation("androidx.test:rules:1.4.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.0")
+    androidTestImplementation("androidx.test:runner:1.5.1")
+    androidTestImplementation("androidx.test:rules:1.5.0")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.8.1")
@@ -93,8 +93,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.3.0")
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2")
+    runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
     // Coil (Jetpack Compose pictures loading)
-    implementation("io.coil-kt:coil-compose:2.0.0-rc01")
+    implementation(libs.coil.kt.compose)
 }
