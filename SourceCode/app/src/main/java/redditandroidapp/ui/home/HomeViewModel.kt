@@ -34,7 +34,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 fetchingError,
                 refreshing
             ) { redditPosts, fetchingError, refreshing ->
-                // Todo: Generic error message.
+                // Todo: Generic error message & improve.
                 val errorMessage = if (fetchingError != null) { fetchingError.message ?: "ERROR" } else null
                 HomeViewState(
                     redditPosts = redditPosts,
@@ -48,9 +48,11 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
             }
         }
 
+        // Todo
         //refresh(force = false)
     }
 
+    // Todo
     private fun refresh(force: Boolean) {
         viewModelScope.launch {
             runCatching {

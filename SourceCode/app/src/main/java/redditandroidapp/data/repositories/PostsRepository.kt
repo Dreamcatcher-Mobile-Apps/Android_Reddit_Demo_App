@@ -76,7 +76,8 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                 it.post?.title,
                 it.post?.thumbnail,
                 it.post?.author,
-                it.post?.name
+                // Todo: Fix it.
+                it.post?.name!!
             )
         }
     }
