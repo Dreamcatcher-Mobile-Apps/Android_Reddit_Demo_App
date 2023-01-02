@@ -70,15 +70,16 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
     }
 
     private fun transformReceivedRedditPostsList(list: List<SinglePostDataGsonModel>): List<RedditPostModel> {
-        return list.map {
-            RedditPostModel(
-                it.post?.permalink,
-                it.post?.title,
-                it.post?.thumbnail,
-                it.post?.author,
-                // Todo: Fix it.
-                it.post?.name!!
-            )
+        return list.mapNotNull {
+            it.post?.let {
+                RedditPostModel(
+                    it.id,
+                    it.permalink,
+                    it.title,
+                    it.thumbnail,
+                    it.author,
+                )
+            }
         }
     }
 }
