@@ -24,17 +24,21 @@ fun Home(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
+
     Surface(Modifier.fillMaxSize()) {
-        HomeContent(posts = viewState.redditPosts ?: emptyList(),
-            )
+        HomeContent(
+            posts = viewState.redditPosts ?: emptyList(),
+            onEndOfListReached = viewModel::refresh
+        )
     }
 }
 
 @Composable
 fun HomeContent(
-    posts: List<RedditPostModel>
+    posts: List<RedditPostModel>,
+    onEndOfListReached: () -> Unit
 ) {
-    PostsList(posts = posts)
+    PostsList(posts = posts, onEndOfListReached = onEndOfListReached)
 }
 
 fun LazyListState.isScrolledToEnd() =
@@ -42,7 +46,7 @@ fun LazyListState.isScrolledToEnd() =
 
 
 @Composable
-private fun PostsList(posts: List<RedditPostModel>) {
+private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
     val listState = rememberLazyListState()
 
     // Use LazyRow when making horizontal lists
@@ -63,7 +67,7 @@ private fun PostsList(posts: List<RedditPostModel>) {
     }
 
     LaunchedEffect(endOfListReached) {
-
+        onEndOfListReached.invoke()
     }
 }
 

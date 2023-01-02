@@ -47,13 +47,10 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 _state.value = it
             }
         }
-
-        // Todo
-        //refresh(force = false)
     }
 
     // Todo
-    private fun refresh(force: Boolean) {
+    fun refresh() {
         viewModelScope.launch {
             runCatching {
                 refreshing.value = true
