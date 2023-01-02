@@ -33,8 +33,8 @@ fun Home(
         HomeContent(
             posts = viewState.redditPosts ?: emptyList(),
             // TODO:  set correct callbacks for refreshing and adding new posts
-            onEndOfListReached = viewModel::refresh,
-            onRefreshPressed = viewModel::refresh
+            onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
+            onRefreshPressed = viewModel::triggerFreshRedditPostsFetching
         )
     }
 }

@@ -25,6 +25,9 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
     val redditPosts: StateFlow<List<RedditPostModel>?>
         get() = _redditPosts
 
+    //  Todo: Consider refactor
+    val lastPostName = redditPosts.value?.last()?.id
+
     fun fetchRedditPosts(lastPostName: String?) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
