@@ -1,7 +1,9 @@
 package redditandroidapp.data.repositories
 
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.network.ApiClient
 import redditandroidapp.data.network.PostsResponseGsonModel
@@ -64,6 +66,11 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 //                    if (refreshPostsTriggered) callback.redditPostsRefreshedSuccessfully(
 //                        transformedList
 //                    ) else callback.redditPostsFetchedSuccessfully(transformedList)
+
+                    // Todo: Improve (global scope?).
+                    GlobalScope.launch {
+                        flow.emit(transformedList)
+                    }
                 }
             }
 

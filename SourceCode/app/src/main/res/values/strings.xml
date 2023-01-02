@@ -9,4 +9,8 @@
     <string name="close">Close</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <string name="connection_error_title">Connection error</string>
+    <string name="connection_error_message">Unable to fetch Reddit posts.\nCheck your internet connection and try again.</string>
+    <string name="retry_label">Retry</string>
+
 </resources>

@@ -65,7 +65,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 }
 
 data class HomeViewState(
-    val redditPosts: List<RedditPostModel> = emptyList(),
+    val redditPosts: List<RedditPostModel>? = null,
     val refreshing: Boolean = false,
     val errorMessage: String? = null
 )

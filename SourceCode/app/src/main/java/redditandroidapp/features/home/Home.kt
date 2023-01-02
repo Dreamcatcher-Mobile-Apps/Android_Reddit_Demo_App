@@ -16,26 +16,36 @@
 
 package redditandroidapp.features.home
 
+import android.util.Log
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import java.lang.reflect.Modifier
+
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun Home(
-    viewModel: HomeViewModel = viewModel()
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
-//    val viewState by viewModel.state.collectAsStateWithLifecycle()
-//    Surface(Modifier.fillMaxSize()) {
+    val viewState by viewModel.state.collectAsStateWithLifecycle()
+
+    viewState.redditPosts?.forEach {
+        Log.d("Reddit Post: ", it.title!!)
+    }
+
+    Surface(Modifier.fillMaxSize()) {
 //        HomeContent(
 //            featuredPodcasts = viewState.featuredPodcasts,
 //            isRefreshing = viewState.refreshing,
 //            modifier = Modifier.fillMaxSize()
 //        )
-//    }
+    }
 }
 
 //@Composable
