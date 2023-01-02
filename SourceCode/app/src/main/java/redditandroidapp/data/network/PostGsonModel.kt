@@ -16,6 +16,7 @@ data class PostGsonModel(
     @SerializedName("author")
     val author: String?,
 
+    // Todo: Do we need 'name'? Isn't it the same as 'title'?
     @SerializedName("name")
     val name: String?
 )

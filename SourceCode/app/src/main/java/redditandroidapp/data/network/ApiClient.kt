@@ -7,6 +7,8 @@ import retrofit2.http.Query
 // External gate for communication with API endpoints (operated by Retrofit)
 interface ApiClient {
 
+    // Todo: Unify these two methods to avoid redundancy.
+
     @GET("/r/Android/hot.json")
     fun getFreshRedditPosts(): Call<PostsResponseGsonModel>
 

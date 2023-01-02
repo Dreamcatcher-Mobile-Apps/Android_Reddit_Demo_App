@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val postsRepository: PostsRepository): ViewModel() {
-    // Holds our currently selected home category
-//    private val selectedCategory = MutableStateFlow(HomeCategory.Discover)
+
     // Holds the currently available home categories
 //    private val fetchedPosts = MutableStateFlow(emptyList())
 
@@ -32,7 +31,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 //             Combines the latest value from each of the flows, allowing us to generate a
 //             view state instance which only contains the latest values.
             combine(
-                postsRepository.getRedditPosts_flowApproach(null),
+                postsRepository.getRedditPosts(null),
                 refreshing
             ) { redditPosts, refreshing ->
                 HomeViewState(

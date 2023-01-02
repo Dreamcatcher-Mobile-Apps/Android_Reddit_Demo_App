@@ -3,17 +3,10 @@ package redditandroidapp.ui.app
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.net.Uri
 import android.os.Build
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat.getSystemService
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
@@ -22,9 +15,6 @@ import androidx.navigation.compose.rememberNavController
  */
 sealed class Screen(val route: String) {
     object Home : Screen("home")
-//    object Player : Screen("player/{episodeUri}") {
-//        fun createRoute(episodeUri: String) = "player/$episodeUri"
-//    }
 }
 
 @Composable
@@ -32,10 +22,10 @@ fun rememberJetcasterAppState(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
 ) = remember(navController, context) {
-    JetcasterAppState(navController, context)
+    RedditAndroidAppState(navController, context)
 }
 
-class JetcasterAppState(
+class RedditAndroidAppState(
     val navController: NavHostController,
     private val context: Context
 ) {
@@ -44,18 +34,6 @@ class JetcasterAppState(
 
     fun refreshOnline() {
         isOnline = checkIfOnline()
-    }
-
-//    fun navigateToPlayer(episodeUri: String, from: NavBackStackEntry) {
-//        // In order to discard duplicated navigation events, we check the Lifecycle
-//        if (from.lifecycleIsResumed()) {
-//            val encodedUri = Uri.encode(episodeUri)
-//            navController.navigate(Screen.Player.createRoute(encodedUri))
-//        }
-//    }
-
-    fun navigateBack() {
-        navController.popBackStack()
     }
 
     // TODO: deprecated code
@@ -72,11 +50,3 @@ class JetcasterAppState(
         }
     }
 }
-
-/**
- * If the lifecycle is not resumed it means this NavBackStackEntry already processed a nav event.
- *
- * This is used to de-duplicate navigation events.
- */
-private fun NavBackStackEntry.lifecycleIsResumed() =
-    this.lifecycle.currentState == Lifecycle.State.RESUMED

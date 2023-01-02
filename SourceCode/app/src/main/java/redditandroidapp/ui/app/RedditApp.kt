@@ -12,7 +12,7 @@ import redditandroidapp.features.home.Home
 
 @Composable
 fun RedditApp(
-    appState: JetcasterAppState = rememberJetcasterAppState()
+    appState: RedditAndroidAppState = rememberJetcasterAppState()
 ) {
     if (appState.isOnline) {
         NavHost(

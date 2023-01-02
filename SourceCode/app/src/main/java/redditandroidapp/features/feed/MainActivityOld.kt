@@ -21,7 +21,7 @@ import redditandroidapp.data.models.RedditPostModel
 
 @AndroidEntryPoint
 class MainActivityOld : ComponentActivity(), RedditPostsFetchingInterface  {
-    private val viewModel: FeedViewModel by viewModels()
+
     private var isLoadingMoreItemsInProgress: Boolean = false
 
     private val STATE_INITIAL_LOADING_IN_PROGRESS = "STATE_INITIAL_LOADING_IN_PROGRESS"
@@ -40,11 +40,11 @@ class MainActivityOld : ComponentActivity(), RedditPostsFetchingInterface  {
     }
 
     private fun fetchRedditPostsFromServer() {
-        viewModel.fetchRedditPostsFromServer(this)
+//        viewModel.fetchRedditPostsFromServer(this)
     }
 
     private fun refreshPostsSubscription() {
-        viewModel.fetchRefreshedRedditPostsFromServer(this)
+//        viewModel.fetchRefreshedRedditPostsFromServer(this)
     }
 
 //    private fun loadMoreItems() {
