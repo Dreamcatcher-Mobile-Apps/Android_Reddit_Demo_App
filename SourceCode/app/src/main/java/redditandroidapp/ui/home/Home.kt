@@ -1,21 +1,25 @@
 package redditandroidapp.ui.home
 
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
+import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
 
 @OptIn(ExperimentalLifecycleComposeApi::class)
@@ -28,22 +32,42 @@ fun Home(
     Surface(Modifier.fillMaxSize()) {
         HomeContent(
             posts = viewState.redditPosts ?: emptyList(),
-            onEndOfListReached = viewModel::refresh
+            onEndOfListReached = viewModel::refresh,
+            onRefreshPressed = viewModel::refresh
         )
     }
 }
 
 @Composable
-fun HomeContent(
+private fun HomeContent(
     posts: List<RedditPostModel>,
-    onEndOfListReached: () -> Unit
+    onEndOfListReached: () -> Unit,
+    onRefreshPressed: () -> Unit
 ) {
-    PostsList(posts = posts, onEndOfListReached = onEndOfListReached)
+    Column {
+        AppBar(onRefreshPressed)
+        Spacer(Modifier.height(8.dp))
+        PostsList(posts = posts, onEndOfListReached = onEndOfListReached)
+        Spacer(Modifier.height(8.dp))
+    }
 }
 
-fun LazyListState.isScrolledToEnd() =
-    layoutInfo.visibleItemsInfo.lastOrNull()?.index == layoutInfo.totalItemsCount - 1
-
+@Composable
+private fun AppBar(onRefreshPressed: () -> Unit) {
+    TopAppBar(
+        elevation = 4.dp,
+        title = {
+            Text(Resources.getSystem().getString(R.string.error))
+        },
+        backgroundColor = MaterialTheme.colors.primarySurface,
+        actions = {
+            IconButton(onClick = {
+                onRefreshPressed.invoke()
+            }) {
+                Icon(Icons.Filled.Refresh, null)
+            }
+        })
+}
 
 @Composable
 private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
@@ -53,27 +77,25 @@ private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Un
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         items(posts.size) { index ->
             PostsListItem(posts[index])
         }
-    }
-
-    val endOfListReached by remember {
-        derivedStateOf {
-            listState.isScrolledToEnd()
+        item {
+            LaunchedEffect(true) {
+                onEndOfListReached.invoke()
+            }
         }
-    }
-
-    LaunchedEffect(endOfListReached) {
-        onEndOfListReached.invoke()
     }
 }
 
 @Composable
 private fun PostsListItem(post: RedditPostModel) {
-    Column {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        modifier = Modifier.padding(vertical = 8.dp)
+    ) {
         post.let { it ->
             Image(
                 painter = rememberAsyncImagePainter(it.thumbnail),
@@ -84,18 +106,21 @@ private fun PostsListItem(post: RedditPostModel) {
                     .height(200.dp)
             )
             Spacer(Modifier.height(16.dp))
-            post.title?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle1
-                )
-            }
-            Spacer(Modifier.height(16.dp))
-            post.author?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.subtitle2
-                )
+            Column(Modifier.padding(horizontal = 16.dp)) {
+                post.title?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
+                post.author?.let {
+                    Text(
+                        text = it,
+                        style = MaterialTheme.typography.subtitle2
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
