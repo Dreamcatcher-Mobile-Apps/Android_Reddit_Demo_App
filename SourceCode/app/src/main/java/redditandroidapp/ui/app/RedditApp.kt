@@ -1,9 +1,9 @@
-package redditandroidapp.app
+package redditandroidapp.ui.app
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import redditandroidapp.features.home.Home
+import redditandroidapp.ui.home.Home
 
 @Composable
 fun RedditApp(

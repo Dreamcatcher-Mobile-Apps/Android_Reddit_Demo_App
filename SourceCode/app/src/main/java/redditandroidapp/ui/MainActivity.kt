@@ -1,9 +1,9 @@
-package redditandroidapp.features.home
+package redditandroidapp.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import redditandroidapp.app.RedditApp
+import redditandroidapp.ui.app.RedditApp
 import redditandroidapp.ui.theme.SourceCodeTheme
 
 class MainActivity : ComponentActivity()  {
