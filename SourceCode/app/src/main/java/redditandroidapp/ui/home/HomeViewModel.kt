@@ -1,4 +1,4 @@
-package redditandroidapp.features.home
+package redditandroidapp.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

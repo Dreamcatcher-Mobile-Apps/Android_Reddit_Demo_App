@@ -1,4 +1,4 @@
-package redditandroidapp.app
+package redditandroidapp.ui.app
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -58,6 +58,7 @@ class JetcasterAppState(
         navController.popBackStack()
     }
 
+    // TODO: deprecated code
     @Suppress("DEPRECATION")
     private fun checkIfOnline(): Boolean {
         val cm = getSystemService(context, ConnectivityManager::class.java)

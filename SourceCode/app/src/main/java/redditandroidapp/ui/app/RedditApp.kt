@@ -1,4 +1,4 @@
-package redditandroidapp.app
+package redditandroidapp.ui.app
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import redditandroidapp.R
 import redditandroidapp.features.home.Home
+import redditandroidapp.ui.home.Home
 
 @Composable
 fun RedditApp(
