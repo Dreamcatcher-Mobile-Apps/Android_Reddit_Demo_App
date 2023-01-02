@@ -3,8 +3,9 @@ package redditandroidapp.data.repositories
 import android.content.res.Resources
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
@@ -19,12 +20,14 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    fun getRedditPosts(
-        lastPostName: String?
-    ) : Flow<List<RedditPostModel>?> {
+    private val _redditPosts = MutableStateFlow<List<RedditPostModel>>(emptyList())
+
+    val redditPosts: StateFlow<List<RedditPostModel>?>
+        get() = _redditPosts
+
+    fun fetchRedditPosts(lastPostName: String?) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
-        val flow = MutableStateFlow<List<RedditPostModel>?>(null)
 
         endpoint.enqueue(object : Callback<PostsResponseGsonModel> {
 
@@ -43,7 +46,9 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
                     // Todo: Improve (global scope?).
                     GlobalScope.launch {
-                        flow.emit(transformedList)
+                        _redditPosts.getAndUpdate {
+                            it.plus(transformedList)
+                        }
                     }
                 }
                 else {
@@ -57,8 +62,6 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                 throw t
             }
         })
-
-        return flow
     }
 
     private fun logErrorDetails(errorTextFromApi: String?): String {
