@@ -5,3 +5,5 @@ import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
 class RedditAndroidApp : Application()
+
+// Todo: Unify with RedditApp file.

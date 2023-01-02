@@ -19,7 +19,7 @@ import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
 
 @AndroidEntryPoint
-class MainActivityOld : ComponentActivity(), RedditPostsFetchingInterface  {
+class MainActivityOld : ComponentActivity()  {
 
     private var isLoadingMoreItemsInProgress: Boolean = false
 
@@ -121,38 +121,38 @@ class MainActivityOld : ComponentActivity(), RedditPostsFetchingInterface  {
 
     // RedditPostsFetchingInterface Functions
 
-    override fun redditPostsFetchedSuccessfully(list: List<RedditPostModel>) {
-        if (list.isNotEmpty()) {
-            setViewState(STATE_LIST_CONTENT_LOADED_SUCCESSFULLY)
+//    override fun redditPostsFetchedSuccessfully(list: List<RedditPostModel>) {
+//        if (list.isNotEmpty()) {
+//            setViewState(STATE_LIST_CONTENT_LOADED_SUCCESSFULLY)
+//
+//            // Display fetched items
+//            setContent {
+//                PostsList(posts = list)
+//            }
+//        }
+//
+//        isLoadingMoreItemsInProgress = false
+//    }
 
-            // Display fetched items
-            setContent {
-                PostsList(posts = list)
-            }
-        }
-
-        isLoadingMoreItemsInProgress = false
-    }
-
-    override fun redditPostsRefreshedSuccessfully(list: List<RedditPostModel>) {
-        if (list.isNotEmpty()) {
-            setViewState(STATE_LIST_CONTENT_LOADED_SUCCESSFULLY)
-
+//    override fun redditPostsRefreshedSuccessfully(list: List<RedditPostModel>) {
+//        if (list.isNotEmpty()) {
+//            setViewState(STATE_LIST_CONTENT_LOADED_SUCCESSFULLY)
+//
             // Display fetched items
 //            postsListAdapter.addFreshPosts(list)
-        }
+//        }
+//
+//        isLoadingMoreItemsInProgress = false
+//    }
 
-        isLoadingMoreItemsInProgress = false
-    }
-
-    override fun redditPostsFetchingError() {
+//    override fun redditPostsFetchingError() {
 //        if (isListContentAlreadyLoaded()) setViewState(
 //            STATE_ERROR_OCCURS_WHEN_LIST_CONTENT_IS_LOADED
 //        )
 //        else setViewState(STATE_INITIAL_LOADING_ERROR)
 //
 //        isLoadingMoreItemsInProgress = false
-    }
+//    }
 
 //    private fun isListContentAlreadyLoaded(): Boolean {
 //        return postsListAdapter.itemCount > 0
