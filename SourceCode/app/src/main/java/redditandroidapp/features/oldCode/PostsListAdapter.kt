@@ -1,4 +1,4 @@
-package redditandroidapp.features.feed
+package redditandroidapp.features.oldCode
 
 import android.view.ViewGroup
 import androidx.compose.foundation.Image

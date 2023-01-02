@@ -8,7 +8,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import redditandroidapp.R
-import redditandroidapp.features.home.Home
+import redditandroidapp.ui.home.Home
 
 @Composable
 fun RedditApp(
