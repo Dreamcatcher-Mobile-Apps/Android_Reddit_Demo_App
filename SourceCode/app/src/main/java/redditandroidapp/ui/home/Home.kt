@@ -1,6 +1,5 @@
 package redditandroidapp.ui.home
 
-import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
@@ -32,6 +32,7 @@ fun Home(
     Surface(Modifier.fillMaxSize()) {
         HomeContent(
             posts = viewState.redditPosts ?: emptyList(),
+            // TODO:  set correct callbacks for refreshing and adding new posts
             onEndOfListReached = viewModel::refresh,
             onRefreshPressed = viewModel::refresh
         )
@@ -57,7 +58,7 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
     TopAppBar(
         elevation = 4.dp,
         title = {
-            Text(Resources.getSystem().getString(R.string.error))
+            Text(stringResource(R.string.app_name))
         },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
@@ -94,7 +95,7 @@ private fun PostsListItem(post: RedditPostModel) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
     ) {
         post.let { it ->
             Image(
