@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 //             Combines the latest value from each of the flows, allowing us to generate a
 //             view state instance which only contains the latest values.
             combine(
-                postsRepository.getRedditPosts(null),
+                postsRepository.redditPosts,
                 fetchingError,
                 refreshing
             ) { redditPosts, fetchingError, refreshing ->
@@ -47,6 +47,15 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 _state.value = it
             }
         }
+        triggerFreshRedditPostsFetching()
+    }
+
+    fun triggerFreshRedditPostsFetching() {
+        postsRepository.fetchRedditPosts(null)
+    }
+
+    fun triggerMoreRedditPostsFetching(lastPostId: String) {
+        postsRepository.fetchRedditPosts(lastPostId)
     }
 
     // Todo
@@ -54,10 +63,9 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         viewModelScope.launch {
             runCatching {
                 refreshing.value = true
-//                podcastsRepository.updatePodcasts(force)
+                postsRepository.fetchRedditPosts(null)
             }
-            // TODO: look at result of runCatching and show any errors
-
+            // Todo: fix
             refreshing.value = false
         }
     }
