@@ -14,13 +14,7 @@ fun RedditApp(
             navController = appState.navController,
             startDestination = Screen.Home.route
         ) {
-            composable(Screen.Home.route) { backStackEntry ->
-                Home(
-                    navigateToPlayer = { episodeUri ->
-//                        appState.navigateToPlayer(episodeUri, backStackEntry)
-                    }
-                )
-            }
+            composable(Screen.Home.route) { backStackEntry -> Home() }
         }
     } else {
         OfflineDialog { appState.refreshOnline() }

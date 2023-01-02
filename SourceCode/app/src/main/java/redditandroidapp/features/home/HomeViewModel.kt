@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
 import javax.inject.Inject
 
@@ -31,12 +32,11 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 //             Combines the latest value from each of the flows, allowing us to generate a
 //             view state instance which only contains the latest values.
             combine(
-//                podcastStore.followedPodcastsSortedByLastEpisode(limit = 20),
-                refreshing,
+                postsRepository.getRedditPosts_flowApproach(null),
                 refreshing
-            ) { refreshing, refreshing2 ->
+            ) { redditPosts, refreshing ->
                 HomeViewState(
-//                    redditPosts = redditPosts,
+                    redditPosts = redditPosts,
                     refreshing = refreshing,
                     errorMessage = null /* TODO */
                 )
@@ -65,9 +65,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 }
 
 data class HomeViewState(
-//    val featuredPodcasts: List<PodcastWithExtraInfo> = emptyList(),
+    val redditPosts: List<RedditPostModel> = emptyList(),
     val refreshing: Boolean = false,
-//    val selectedHomeCategory: HomeCategory = HomeCategory.Discover,
-//    val homeCategories: List<HomeCategory> = emptyList(),
     val errorMessage: String? = null
 )

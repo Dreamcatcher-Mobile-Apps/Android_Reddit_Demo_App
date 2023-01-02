@@ -16,13 +16,16 @@
 
 package redditandroidapp.features.home
 
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import java.lang.reflect.Modifier
 
-//@OptIn(ExperimentalLifecycleComposeApi::class)
+@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun Home(
-    navigateToPlayer: (String) -> Unit,
     viewModel: HomeViewModel = viewModel()
 ) {
 //    val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -30,11 +33,6 @@ fun Home(
 //        HomeContent(
 //            featuredPodcasts = viewState.featuredPodcasts,
 //            isRefreshing = viewState.refreshing,
-//            homeCategories = viewState.homeCategories,
-//            selectedHomeCategory = viewState.selectedHomeCategory,
-//            onCategorySelected = viewModel::onHomeCategorySelected,
-//            onPodcastUnfollowed = viewModel::onPodcastUnfollowed,
-//            navigateToPlayer = navigateToPlayer,
 //            modifier = Modifier.fillMaxSize()
 //        )
 //    }

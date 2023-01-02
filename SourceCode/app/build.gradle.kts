@@ -76,6 +76,7 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.1.0-alpha03")
     implementation("androidx.compose.runtime:runtime-livedata:1.3.2")
     implementation("androidx.compose.runtime:runtime-rxjava2:1.3.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0-alpha03")
 
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
