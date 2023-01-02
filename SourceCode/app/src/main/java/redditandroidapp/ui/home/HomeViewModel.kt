@@ -15,11 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(private val postsRepository: PostsRepository): ViewModel() {
 
-    // Holds the currently available home categories
-//    private val fetchedPosts = MutableStateFlow(emptyList())
-
     // Holds our view state which the UI collects via [state]
     private val _state = MutableStateFlow(HomeViewState())
+
+    private val fetchingError = MutableStateFlow<Throwable?>(null)
 
     private val refreshing = MutableStateFlow(false)
 
@@ -32,24 +31,28 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 //             view state instance which only contains the latest values.
             combine(
                 postsRepository.getRedditPosts(null),
+                fetchingError,
                 refreshing
-            ) { redditPosts, refreshing ->
+            ) { redditPosts, fetchingError, refreshing ->
+                // Todo: Generic error message & improve.
+                val errorMessage = if (fetchingError != null) { fetchingError.message ?: "ERROR" } else null
                 HomeViewState(
                     redditPosts = redditPosts,
                     refreshing = refreshing,
-                    errorMessage = null /* TODO */
+                    errorMessage = errorMessage
                 )
             }.catch { throwable ->
-                // TODO: emit a UI error here. For now we'll just rethrow
-                throw throwable
+                fetchingError.emit(throwable)
             }.collect {
                 _state.value = it
             }
         }
 
-        refresh(force = false)
+        // Todo
+        //refresh(force = false)
     }
 
+    // Todo
     private fun refresh(force: Boolean) {
         viewModelScope.launch {
             runCatching {
