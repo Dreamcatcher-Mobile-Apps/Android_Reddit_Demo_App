@@ -95,17 +95,21 @@ private fun PostsListItem(post: RedditPostModel) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-        modifier = Modifier.padding(vertical = 8.dp, horizontal = 8.dp)
+        modifier = Modifier
+            .padding(vertical = 8.dp, horizontal = 8.dp)
+            .fillMaxWidth()
     ) {
         post.let { it ->
-            Image(
-                painter = rememberAsyncImagePainter(it.thumbnail),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
+            if (it.thumbnail?.endsWith(".jpg") == true || it.thumbnail?.endsWith(".png") == true) {
+                Image(
+                    painter = rememberAsyncImagePainter(it.thumbnail),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                )
+            }
             Spacer(Modifier.height(16.dp))
             Column(Modifier.padding(horizontal = 16.dp)) {
                 post.title?.let {
