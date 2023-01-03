@@ -3,6 +3,7 @@ package redditandroidapp.ui.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -33,7 +34,7 @@ fun Home(
         HomeContent(
             posts = viewState.redditPosts ?: emptyList(),
             onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
-            onRefreshPressed = viewModel::triggerFreshRedditPostsFetching
+            onRefreshPressed = viewModel::triggxerFreshRedditPostsFetching
         )
     }
 }
@@ -71,14 +72,9 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 
 @Composable
 private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
-//    val listState = if (resetListState) rememberLazyListState() else LazyListState()
-    val listState = rememberLazyListState()
 
     // Use LazyRow when making horizontal lists
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-    ) {
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(posts.size) { index ->
             PostsListItem(posts[index])
         }

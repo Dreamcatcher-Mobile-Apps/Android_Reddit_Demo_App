@@ -20,7 +20,7 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    private val _redditPosts = MutableStateFlow<List<RedditPostModel>>(emptyList())
+    private val _redditPosts = MutableStateFlow<List<RedditPostModel>>(mutableListOf())
 
     val redditPosts: StateFlow<List<RedditPostModel>?>
         get() = _redditPosts
@@ -29,7 +29,7 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
         return if (!redditPosts.value.isNullOrEmpty()) redditPosts.value?.last()?.id else null
     }
 
-    fun fetchRedditPosts(lastPostName: String?, fetchingErrorFlow: MutableStateFlow<Throwable?>) {
+    fun fetchRedditPosts(lastPostName: String?, fetchingErrorFlow: MutableStateFlow<Throwable?>, refreshStoredPosts: Boolean) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
 
@@ -51,7 +51,12 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                     // Todo: Improve (global scope?).
                     GlobalScope.launch {
                         _redditPosts.getAndUpdate {
-                            it.plus(transformedList)
+                            if (refreshStoredPosts) {
+                                (it as MutableList<RedditPostModel>).clear()
+                                it.plus(transformedList)
+                            } else {
+                                it.plus(transformedList)
+                            }
                         }
                     }
                 }

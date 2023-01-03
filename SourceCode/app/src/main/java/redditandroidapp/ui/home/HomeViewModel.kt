@@ -35,10 +35,14 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 postsRepository.redditPosts,
                 fetchingError,
                 refreshing
-            ) { redditPosts, fetchingError, refreshing ->
+            ) { redditPosts, fetchingError, isRefreshInProgress ->
+
+                // Todo: Hak jak chuj.
+                if (isRefreshInProgress) refreshing.emit(false)
+
                 HomeViewState(
                     redditPosts = redditPosts,
-                    refreshing = refreshing,
+                    refreshing = isRefreshInProgress,
                     errorMessage = getUserFacingErrorMessage(fetchingError)
                 )
             }.catch { throwable ->
@@ -53,16 +57,17 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     // Todo: Implement "refreshing = true"
 
     fun triggerFreshRedditPostsFetching() {
-        triggerRedditPostsFetching(null)
+        triggerRedditPostsFetching(null, true)
     }
 
     fun triggerMoreRedditPostsFetching() {
-        triggerRedditPostsFetching(postsRepository.getLastPostName())
+        triggerRedditPostsFetching(postsRepository.getLastPostName(), false)
     }
 
-    private fun triggerRedditPostsFetching(lastPostId: String?) {
+    private fun triggerRedditPostsFetching(lastPostId: String?, refreshStoredPosts: Boolean) {
         viewModelScope.launch {
-            postsRepository.fetchRedditPosts(lastPostId, fetchingError)
+            refreshing.emit(true)
+            postsRepository.fetchRedditPosts(lastPostId, fetchingError, refreshStoredPosts)
         }
     }
 
