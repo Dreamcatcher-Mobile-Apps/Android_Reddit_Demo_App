@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
+import redditandroidapp.injection.RedditAndroidApp
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,12 +36,10 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 fetchingError,
                 refreshing
             ) { redditPosts, fetchingError, refreshing ->
-                // Todo: Generic error message & improve.
-                val errorMessage = if (fetchingError != null) { fetchingError.message ?: "ERROR" } else null
                 HomeViewState(
                     redditPosts = redditPosts,
                     refreshing = refreshing,
-                    errorMessage = errorMessage
+                    errorMessage = getUserFacingErrorMessage(fetchingError)
                 )
             }.catch { throwable ->
                 fetchingError.emit(throwable)
@@ -64,6 +64,11 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         viewModelScope.launch {
             postsRepository.fetchRedditPosts(lastPostId, fetchingError)
         }
+    }
+
+    private fun getUserFacingErrorMessage(fetchingError: Throwable?): String {
+        val genericErrorMessage = RedditAndroidApp.getLocalResources().getString(R.string.connection_error_message)
+        return fetchingError?.message ?: genericErrorMessage
     }
 }
 
