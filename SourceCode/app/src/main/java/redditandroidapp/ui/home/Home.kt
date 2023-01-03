@@ -32,7 +32,6 @@ fun Home(
     Surface(Modifier.fillMaxSize()) {
         HomeContent(
             posts = viewState.redditPosts ?: emptyList(),
-            // TODO:  set correct callbacks for refreshing and adding new posts
             onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
             onRefreshPressed = viewModel::triggerFreshRedditPostsFetching
         )
@@ -72,6 +71,7 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 
 @Composable
 private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
+//    val listState = if (resetListState) rememberLazyListState() else LazyListState()
     val listState = rememberLazyListState()
 
     // Use LazyRow when making horizontal lists

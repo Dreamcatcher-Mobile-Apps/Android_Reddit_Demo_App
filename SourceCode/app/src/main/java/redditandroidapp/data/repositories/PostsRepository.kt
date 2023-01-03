@@ -1,6 +1,5 @@
 package redditandroidapp.data.repositories
 
-import android.content.res.Resources
 import android.util.Log
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +11,7 @@ import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.network.ApiClient
 import redditandroidapp.data.network.PostsResponseGsonModel
 import redditandroidapp.data.network.SinglePostDataGsonModel
+import redditandroidapp.injection.RedditAndroidApp
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,9 +26,11 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
         get() = _redditPosts
 
     //  Todo: Consider refactor
-    val lastPostName = redditPosts.value?.last()?.id
+    fun getLastPostName(): String? {
+        return if (!redditPosts.value.isNullOrEmpty()) redditPosts.value?.last()?.id else null
+    }
 
-    fun fetchRedditPosts(lastPostName: String?) {
+    fun fetchRedditPosts(lastPostName: String?, fetchingErrorFlow: MutableStateFlow<Throwable?>) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
 
@@ -56,20 +58,26 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                 }
                 else {
                     val transformedErrorMessage = logErrorDetails(response.errorBody()?.string())
-                    throw Throwable(transformedErrorMessage)
+                    emitErrorToErrorFlow(fetchingErrorFlow, Throwable(transformedErrorMessage))
                 }
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>, t: Throwable) {
                 logErrorDetails(t.message)
-                throw t
+                emitErrorToErrorFlow(fetchingErrorFlow, t)
             }
         })
     }
 
+    private fun emitErrorToErrorFlow(flow: MutableStateFlow<Throwable?>, error: Throwable) {
+        // Todo: Improve (global scope?).
+        GlobalScope.launch { flow.emit(error) }
+    }
+
     private fun logErrorDetails(errorTextFromApi: String?): String {
-        val errorTag = Resources.getSystem().getString(R.string.error)
-        val errorApiFetchingGenericText = Resources.getSystem().getString(R.string.error_api_call_failure)
+        val localResources = RedditAndroidApp.getLocalResources()
+        val errorTag = localResources.getString(R.string.error)
+        val errorApiFetchingGenericText = localResources.getString(R.string.error_api_call_failure)
         val finalErrorText = errorTextFromApi ?: errorApiFetchingGenericText
         Log.e(errorTag, finalErrorText)
         return finalErrorText

@@ -50,17 +50,20 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         triggerFreshRedditPostsFetching()
     }
 
-    // Todo both in triggerFreshRedditPostsFetching and triggerMoreRedditPostsFetching:
-    //  Should we use coroutine here and runCatching block as in Jetcaster?
-
     // Todo: Implement "refreshing = true"
 
     fun triggerFreshRedditPostsFetching() {
-        postsRepository.fetchRedditPosts(null)
+        triggerRedditPostsFetching(null)
     }
 
     fun triggerMoreRedditPostsFetching() {
-        postsRepository.fetchRedditPosts(postsRepository.lastPostName)
+        triggerRedditPostsFetching(postsRepository.getLastPostName())
+    }
+
+    private fun triggerRedditPostsFetching(lastPostId: String?) {
+        viewModelScope.launch {
+            postsRepository.fetchRedditPosts(lastPostId, fetchingError)
+        }
     }
 }
 
