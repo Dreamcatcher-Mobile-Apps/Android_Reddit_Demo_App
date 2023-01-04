@@ -22,11 +22,11 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
     private val _redditPosts = MutableStateFlow<List<RedditPostModel>>(mutableListOf())
 
-    val redditPosts: StateFlow<List<RedditPostModel>?>
+    val redditPosts: StateFlow<List<RedditPostModel>>
         get() = _redditPosts
 
     fun getLastPostName(): String? {
-        return if (!redditPosts.value.isNullOrEmpty()) redditPosts.value?.last()?.id else null
+        return if (redditPosts.value.isNotEmpty()) redditPosts.value.last().id else null
     }
 
     fun fetchRedditPosts(lastPostName: String?, fetchingErrorFlow: MutableStateFlow<Throwable?>, refreshStoredPosts: Boolean) {

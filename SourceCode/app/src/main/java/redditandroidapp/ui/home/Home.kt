@@ -3,14 +3,13 @@ package redditandroidapp.ui.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -32,23 +31,31 @@ fun Home(
 
     Surface(Modifier.fillMaxSize()) {
         HomeContent(
-            posts = viewState.redditPosts ?: emptyList(),
+            state = viewState,
             onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
-            onRefreshPressed = viewModel::triggxerFreshRedditPostsFetching
+            onRefreshPressed = viewModel::triggerFreshRedditPostsFetching
         )
     }
 }
 
 @Composable
 private fun HomeContent(
-    posts: List<RedditPostModel>,
+    state: HomeViewState,
     onEndOfListReached: () -> Unit,
     onRefreshPressed: () -> Unit
 ) {
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         AppBar(onRefreshPressed)
-        Spacer(Modifier.height(8.dp))
-        PostsList(posts = posts, onEndOfListReached = onEndOfListReached)
+        if (state.refreshing) {
+            LoadingSpinner(
+                modifier = Modifier
+                    .padding(vertical = 24.dp)
+                    .size(50.dp))
+        } else {
+            PostsList(posts = state.redditPosts, onEndOfListReached = onEndOfListReached)
+        }
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -72,9 +79,10 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 
 @Composable
 private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
-
-    // Use LazyRow when making horizontal lists
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         items(posts.size) { index ->
             PostsListItem(posts[index])
         }
@@ -82,6 +90,9 @@ private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Un
             LaunchedEffect(true) {
                 onEndOfListReached.invoke()
             }
+            LoadingSpinner(modifier = Modifier
+                .padding(vertical = 12.dp)
+                .size(40.dp))
         }
     }
 }
@@ -125,6 +136,10 @@ private fun PostsListItem(post: RedditPostModel) {
             }
         }
     }
+}
+@Composable
+private fun LoadingSpinner(modifier: Modifier = Modifier) {
+    CircularProgressIndicator(strokeWidth = 3.dp, modifier = modifier)
 }
 
 //TODO: Fix preview (needs adding mock data to pass to this preview)

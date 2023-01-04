@@ -22,7 +22,10 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 
     private val fetchingError = MutableStateFlow<Throwable?>(null)
 
-    private val refreshing = MutableStateFlow(false)
+    private val refreshing = MutableStateFlow(true)
+
+    private val loadingMorePosts = MutableStateFlow(false)
+
 
     val state: StateFlow<HomeViewState>
         get() = _state
@@ -34,8 +37,9 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
             combine(
                 postsRepository.redditPosts,
                 fetchingError,
-                refreshing
-            ) { redditPosts, fetchingError, isRefreshInProgress ->
+                refreshing,
+                loadingMorePosts
+            ) { redditPosts, fetchingError, isRefreshInProgress, isLoadingMoreInProgress ->
 
                 // Todo: Hak jak chuj.
                 if (isRefreshInProgress) refreshing.emit(false)
@@ -43,6 +47,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
                 HomeViewState(
                     redditPosts = redditPosts,
                     refreshing = isRefreshInProgress,
+                    loadingMorePosts = isLoadingMoreInProgress,
                     errorMessage = getUserFacingErrorMessage(fetchingError)
                 )
             }.catch { throwable ->
@@ -66,7 +71,12 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 
     private fun triggerRedditPostsFetching(lastPostId: String?, refreshStoredPosts: Boolean) {
         viewModelScope.launch {
-            refreshing.emit(true)
+            // TODO: hacking continued
+            if(refreshStoredPosts) {
+                refreshing.emit(true)
+            } else {
+                loadingMorePosts.emit(true)
+            }
             postsRepository.fetchRedditPosts(lastPostId, fetchingError, refreshStoredPosts)
         }
     }
@@ -78,7 +88,8 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 }
 
 data class HomeViewState(
-    val redditPosts: List<RedditPostModel>? = null,
+    val redditPosts: List<RedditPostModel> = emptyList(),
     val refreshing: Boolean = false,
+    val loadingMorePosts: Boolean = false,
     val errorMessage: String? = null
 )
