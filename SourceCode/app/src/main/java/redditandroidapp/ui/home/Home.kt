@@ -64,14 +64,10 @@ private fun HomeContent(
 private fun AppBar(onRefreshPressed: () -> Unit) {
     TopAppBar(
         elevation = 4.dp,
-        title = {
-            Text(stringResource(R.string.app_name))
-        },
+        title = { Text(stringResource(R.string.app_name)) },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
-            IconButton(onClick = {
-                onRefreshPressed.invoke()
-            }) {
+            IconButton(onClick = onRefreshPressed) {
                 Icon(Icons.Filled.Refresh, null)
             }
         })
