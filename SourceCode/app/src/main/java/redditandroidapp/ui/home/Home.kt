@@ -40,7 +40,7 @@ fun Home(
 
 @Composable
 private fun HomeContent(
-    state: HomeViewState,
+    state: State,
     onEndOfListReached: () -> Unit,
     onRefreshPressed: () -> Unit
 ) {
@@ -48,13 +48,17 @@ private fun HomeContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppBar(onRefreshPressed)
-        if (state.refreshing) {
-            LoadingSpinner(
-                modifier = Modifier
-                    .padding(vertical = 24.dp)
-                    .size(50.dp))
-        } else {
-            PostsList(posts = state.redditPosts, onEndOfListReached = onEndOfListReached)
+        when(state) {
+            is State.InitialLoading -> {
+                LoadingSpinner(
+                    modifier = Modifier
+                        .padding(vertical = 24.dp)
+                        .size(50.dp))
+            }
+            is State.ContentDisplayedSuccessfully -> {
+                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
+            }
+            else -> {}
         }
         Spacer(Modifier.height(8.dp))
     }

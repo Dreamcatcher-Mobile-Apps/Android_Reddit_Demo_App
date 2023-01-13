@@ -12,6 +12,7 @@ import redditandroidapp.data.network.ApiClient
 import redditandroidapp.data.network.PostsResponseGsonModel
 import redditandroidapp.data.network.SinglePostDataGsonModel
 import redditandroidapp.injection.RedditAndroidApp
+import redditandroidapp.ui.home.PostsFetchingCallback
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +30,11 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
         return if (redditPosts.value.isNotEmpty()) redditPosts.value.last().id else null
     }
 
-    fun fetchRedditPosts(lastPostName: String?, fetchingErrorFlow: MutableStateFlow<Throwable?>, refreshStoredPosts: Boolean) {
+    fun fetchRedditPosts(lastPostName: String?,
+                         fetchingErrorFlow: MutableStateFlow<Throwable?>,
+                         refreshStoredPosts: Boolean,
+                         callback: PostsFetchingCallback
+    ) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
 
@@ -48,27 +53,31 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                     val receivedList = it
                     val transformedList = transformReceivedRedditPostsList(receivedList)
 
-                    // Todo: Improve (global scope?).
-                    GlobalScope.launch {
-                        _redditPosts.getAndUpdate {
-                            if (refreshStoredPosts) {
-                                (it as MutableList<RedditPostModel>).clear()
-                                it.plus(transformedList)
-                            } else {
-                                it.plus(transformedList)
-                            }
-                        }
-                    }
+                    callback.postsFetchedSuccessfully(transformedList)
+
+//                    // Todo: Improve (global scope?).
+//                    GlobalScope.launch {
+//                        _redditPosts.getAndUpdate {
+//                            if (refreshStoredPosts) {
+//                                (it as MutableList<RedditPostModel>).clear()
+//                                it.plus(transformedList)
+//                            } else {
+//                                it.plus(transformedList)
+//                            }
+//                        }
+//                    }
                 }
                 else {
                     val transformedErrorMessage = logErrorDetails(response.errorBody()?.string())
-                    emitErrorToErrorFlow(fetchingErrorFlow, Throwable(transformedErrorMessage))
+//                    emitErrorToErrorFlow(fetchingErrorFlow, Throwable(transformedErrorMessage))
+                    callback.postsFetchingError()
                 }
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>, t: Throwable) {
                 logErrorDetails(t.message)
-                emitErrorToErrorFlow(fetchingErrorFlow, t)
+                callback.postsFetchingError()
+//                emitErrorToErrorFlow(fetchingErrorFlow, t)
             }
         })
     }
