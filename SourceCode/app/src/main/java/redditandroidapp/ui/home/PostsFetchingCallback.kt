@@ -4,5 +4,5 @@ import redditandroidapp.data.models.RedditPostModel
 
 interface PostsFetchingCallback {
     fun postsFetchedSuccessfully(list: List<RedditPostModel>)
-    fun postsFetchingError()
+    fun postsFetchingError(errorMessage: String)
 }

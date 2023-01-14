@@ -48,12 +48,32 @@ private fun HomeContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppBar(onRefreshPressed)
-        when(state) {
+        when (state) {
             is State.InitialLoading -> {
                 LoadingSpinner(
                     modifier = Modifier
                         .padding(vertical = 24.dp)
-                        .size(50.dp))
+                        .size(50.dp)
+                )
+            }
+            is State.InitialLoadingError -> {
+                AlertDialog(
+                    onDismissRequest = { /*TODO*/ },
+                    title = {
+                        Text(text = "Oops!")
+                    },
+                    text = {
+                        Text("There was an error fetching Reddit posts. Tap here to try again.")
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                onRefreshPressed()
+                            }) {
+                            Text("Retry")
+                        }
+                    },
+                )
             }
             is State.ContentDisplayedSuccessfully -> {
                 PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
@@ -90,9 +110,11 @@ private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Un
             LaunchedEffect(true) {
                 onEndOfListReached.invoke()
             }
-            LoadingSpinner(modifier = Modifier
-                .padding(vertical = 12.dp)
-                .size(40.dp))
+            LoadingSpinner(
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .size(40.dp)
+            )
         }
     }
 }
@@ -137,6 +159,7 @@ private fun PostsListItem(post: RedditPostModel) {
         }
     }
 }
+
 @Composable
 private fun LoadingSpinner(modifier: Modifier = Modifier) {
     CircularProgressIndicator(strokeWidth = 3.dp, modifier = modifier)

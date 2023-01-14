@@ -22,31 +22,7 @@ fun rememberJetcasterAppState(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
 ) = remember(navController, context) {
-    RedditAndroidAppState(navController, context)
+    RedditAndroidAppState(navController)
 }
 
-class RedditAndroidAppState(
-    val navController: NavHostController,
-    private val context: Context
-) {
-    var isOnline by mutableStateOf(checkIfOnline())
-        private set
-
-    fun refreshOnline() {
-        isOnline = checkIfOnline()
-    }
-
-    // TODO: deprecated code
-    @Suppress("DEPRECATION")
-    private fun checkIfOnline(): Boolean {
-        val cm = getSystemService(context, ConnectivityManager::class.java)
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val capabilities = cm?.getNetworkCapabilities(cm.activeNetwork) ?: return false
-            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
-                capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        } else {
-            cm?.activeNetworkInfo?.isConnectedOrConnecting == true
-        }
-    }
-}
+class RedditAndroidAppState(val navController: NavHostController)

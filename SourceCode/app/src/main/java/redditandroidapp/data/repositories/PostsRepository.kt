@@ -1,11 +1,6 @@
 package redditandroidapp.data.repositories
 
 import android.util.Log
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.getAndUpdate
-import kotlinx.coroutines.launch
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.network.ApiClient
@@ -21,19 +16,19 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    private val _redditPosts = MutableStateFlow<List<RedditPostModel>>(mutableListOf())
+    private val _redditPosts = ArrayList<RedditPostModel>()
 
-    val redditPosts: StateFlow<List<RedditPostModel>>
+    val redditPosts: List<RedditPostModel>
         get() = _redditPosts
 
     fun getLastPostName(): String? {
-        return if (redditPosts.value.isNotEmpty()) redditPosts.value.last().id else null
+        return if (redditPosts.isNotEmpty()) redditPosts.last().id else null
     }
 
-    fun fetchRedditPosts(lastPostName: String?,
-                         fetchingErrorFlow: MutableStateFlow<Throwable?>,
-                         refreshStoredPosts: Boolean,
-                         callback: PostsFetchingCallback
+    fun fetchRedditPosts(
+        lastPostName: String?,
+        callback: PostsFetchingCallback,
+        clearCache: Boolean
     ) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
@@ -49,42 +44,36 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                     && response.body()?.data != null
                     && !response.body()?.data?.childrenPosts.isNullOrEmpty()
                 )
-                response.body()?.data?.childrenPosts?.let {
-                    val receivedList = it
-                    val transformedList = transformReceivedRedditPostsList(receivedList)
+                    response.body()?.data?.childrenPosts?.let {
+                        val receivedList = it
+                        val transformedList = transformReceivedRedditPostsList(receivedList)
 
-                    callback.postsFetchedSuccessfully(transformedList)
+                        if (clearCache) _redditPosts.clear()
+                        _redditPosts.addAll(transformedList)
 
-//                    // Todo: Improve (global scope?).
-//                    GlobalScope.launch {
-//                        _redditPosts.getAndUpdate {
-//                            if (refreshStoredPosts) {
-//                                (it as MutableList<RedditPostModel>).clear()
-//                                it.plus(transformedList)
-//                            } else {
-//                                it.plus(transformedList)
-//                            }
-//                        }
-//                    }
-                }
+                        callback.postsFetchedSuccessfully(redditPosts)
+                    }
                 else {
                     val transformedErrorMessage = logErrorDetails(response.errorBody()?.string())
-//                    emitErrorToErrorFlow(fetchingErrorFlow, Throwable(transformedErrorMessage))
-                    callback.postsFetchingError()
+                    callback.postsFetchingError(transformedErrorMessage)
                 }
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>, t: Throwable) {
                 logErrorDetails(t.message)
-                callback.postsFetchingError()
-//                emitErrorToErrorFlow(fetchingErrorFlow, t)
+                callback.postsFetchingError(getUserFacingErrorMessage(t))
             }
         })
     }
 
-    private fun emitErrorToErrorFlow(flow: MutableStateFlow<Throwable?>, error: Throwable) {
-        // Todo: Improve (global scope?).
-        GlobalScope.launch { flow.emit(error) }
+    fun fetchCachedPosts(): List<RedditPostModel> {
+        return redditPosts
+    }
+
+    private fun getUserFacingErrorMessage(fetchingError: Throwable?): String {
+        val genericErrorMessage =
+            RedditAndroidApp.getLocalResources().getString(R.string.connection_error_message)
+        return fetchingError?.message ?: genericErrorMessage
     }
 
     private fun logErrorDetails(errorTextFromApi: String?): String {
