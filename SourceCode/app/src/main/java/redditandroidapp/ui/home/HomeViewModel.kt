@@ -20,14 +20,16 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     val state: StateFlow<State>
         get() = _state
 
-    init { triggerFreshRedditPostsFetching() }
+    init {
+        triggerFreshRedditPostsFetching()
+    }
 
     fun triggerFreshRedditPostsFetching() {
         triggerRedditPostsFetching(null, true)
     }
 
     fun triggerMoreRedditPostsFetching() {
-        _state.value = State.ContentDisplayedAndRefreshing(postsRepository.fetchCachedPosts())
+        _state.value = State.ContentDisplayedAndRefreshing(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(postsRepository.getLastPostName(), false)
     }
 
@@ -46,8 +48,13 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         _state.value = State.ContentDisplayedSuccessfully(list)
     }
 
-    override fun postsFetchingError(errorMessage: String) {
-        _state.value = State.InitialLoadingError(errorMessage)
+    override fun postsFetchingError(
+        errorMessage: String,
+        cachedRedditPosts: List<RedditPostModel>
+    ) {
+        if (cachedRedditPosts.isNotEmpty()) _state.value =
+            State.ContentDisplayedAndRefreshingError(cachedRedditPosts, errorMessage)
+        else _state.value = State.InitialLoadingError(errorMessage)
     }
 }
 

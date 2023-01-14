@@ -1,8 +1,11 @@
 package redditandroidapp.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -13,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,11 +78,23 @@ private fun HomeContent(
                         }
                     },
                 )
+                Toast.makeText(LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT).show()
             }
             is State.ContentDisplayedSuccessfully -> {
                 PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
             }
-            else -> {}
+            is State.ContentDisplayedAndRefreshing -> {
+                LoadingSpinner(
+                    modifier = Modifier
+                        .padding(vertical = 24.dp)
+                        .size(50.dp)
+                )
+                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
+            }
+            is State.ContentDisplayedAndRefreshingError -> {
+                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
+                Toast.makeText(LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT).show()
+            }
         }
         Spacer(Modifier.height(8.dp))
     }
@@ -99,8 +115,10 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 
 @Composable
 private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
+    val listState = rememberLazyListState()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        state = listState,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         items(posts.size) { index ->

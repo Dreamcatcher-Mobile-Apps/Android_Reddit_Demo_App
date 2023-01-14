@@ -1,12 +1,9 @@
 package redditandroidapp.ui.app
 
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 

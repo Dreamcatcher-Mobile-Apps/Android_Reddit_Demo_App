@@ -16,13 +16,13 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    private val _redditPosts = ArrayList<RedditPostModel>()
+    private val _cachedRedditPosts = ArrayList<RedditPostModel>()
 
-    val redditPosts: List<RedditPostModel>
-        get() = _redditPosts
+    val cachedRedditPosts: List<RedditPostModel>
+        get() = _cachedRedditPosts
 
     fun getLastPostName(): String? {
-        return if (redditPosts.isNotEmpty()) redditPosts.last().id else null
+        return if (cachedRedditPosts.isNotEmpty()) cachedRedditPosts.last().id else null
     }
 
     fun fetchRedditPosts(
@@ -47,42 +47,58 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                     response.body()?.data?.childrenPosts?.let {
                         val receivedList = it
                         val transformedList = transformReceivedRedditPostsList(receivedList)
-
-                        if (clearCache) _redditPosts.clear()
-                        _redditPosts.addAll(transformedList)
-
-                        callback.postsFetchedSuccessfully(redditPosts)
+                        val storedPosts =
+                            saveFetchedPostsInCache(clearCache, transformedList, _cachedRedditPosts)
+                        callback.postsFetchedSuccessfully(storedPosts)
                     }
                 else {
-                    val transformedErrorMessage = logErrorDetails(response.errorBody()?.string())
-                    callback.postsFetchingError(transformedErrorMessage)
+                    logErrorDetails(prepareLogFriendlyErrorMessage(null))
+                    callback.postsFetchingError(
+                        prepareHumanFriendlyErrorMessage(null),
+                        cachedRedditPosts
+                    )
                 }
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>, t: Throwable) {
-                logErrorDetails(t.message)
-                callback.postsFetchingError(getUserFacingErrorMessage(t))
+                logErrorDetails(prepareLogFriendlyErrorMessage(t))
+                callback.postsFetchingError(prepareHumanFriendlyErrorMessage(t), cachedRedditPosts)
             }
         })
     }
 
-    fun fetchCachedPosts(): List<RedditPostModel> {
-        return redditPosts
+    fun saveFetchedPostsInCache(
+        clearCache: Boolean,
+        postsToBeStored: List<RedditPostModel>,
+        postsAlreadyCached: MutableList<RedditPostModel>
+    ): List<RedditPostModel> {
+        if (clearCache) postsAlreadyCached.clear()
+        postsAlreadyCached.addAll(postsToBeStored)
+        return postsAlreadyCached
     }
 
-    private fun getUserFacingErrorMessage(fetchingError: Throwable?): String {
+    fun getCachedPosts(): List<RedditPostModel> {
+        return cachedRedditPosts
+    }
+
+    private fun prepareLogFriendlyErrorMessage(throwable: Throwable?): String {
+        val genericErrorMessage =
+            RedditAndroidApp.getLocalResources().getString(R.string.error_api_call_failure)
+        val errorTextFromApi = throwable?.message
+        return errorTextFromApi ?: genericErrorMessage
+    }
+
+    // Todo: Change into enum with problem reason.
+    private fun prepareHumanFriendlyErrorMessage(throwable: Throwable?): String {
         val genericErrorMessage =
             RedditAndroidApp.getLocalResources().getString(R.string.connection_error_message)
-        return fetchingError?.message ?: genericErrorMessage
+        val errorTextFromApi = throwable?.message
+        return errorTextFromApi ?: genericErrorMessage
     }
 
-    private fun logErrorDetails(errorTextFromApi: String?): String {
-        val localResources = RedditAndroidApp.getLocalResources()
-        val errorTag = localResources.getString(R.string.error)
-        val errorApiFetchingGenericText = localResources.getString(R.string.error_api_call_failure)
-        val finalErrorText = errorTextFromApi ?: errorApiFetchingGenericText
-        Log.e(errorTag, finalErrorText)
-        return finalErrorText
+    private fun logErrorDetails(errorMessage: String) {
+        val errorTag = RedditAndroidApp.getLocalResources().getString(R.string.error)
+        Log.e(errorTag, errorMessage)
     }
 
     private fun transformReceivedRedditPostsList(list: List<SinglePostDataGsonModel>): List<RedditPostModel> {
