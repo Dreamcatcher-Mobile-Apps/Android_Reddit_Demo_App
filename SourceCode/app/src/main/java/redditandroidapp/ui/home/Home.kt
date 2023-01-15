@@ -11,8 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import redditandroidapp.R
@@ -54,13 +54,9 @@ private fun HomeContent(
     ) {
         AppBar(onRefreshPressed)
         state.errorMessage?.let {
-            Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+            ErrorDialog(onRefreshPressed)
         }
-        // Todo: Error dialog?
-        if (state.errorMessage == null && !state.isLoading) {
-            Toast.makeText(LocalContext.current, "Suck-cess", Toast.LENGTH_SHORT).show()
-        }
-
+        // Stacks widgets on top of each other
         BoxWithConstraints(contentAlignment = Alignment.Center) {
             PostsList(
                 posts = state.posts,
@@ -92,26 +88,32 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 }
 
 @Composable
-private fun errorDialog(onRefreshPressed: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = {},
-        title = {
-            Text(text = "Oops!")
-        },
-        text = {
-            Text("There was an error fetching Reddit posts. Tap here to try again.")
-        },
-        confirmButton = {
-            Button(onClick = {
-                onRefreshPressed()
-            }) {
-                Text("Retry")
-            }
-        },
-    )
-    Toast.makeText(
-        LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT
-    ).show()
+private fun ErrorDialog(onRefreshPressed: () -> Unit) {
+    var dialogOpen by remember {
+        mutableStateOf(true)
+    }
+
+    if (dialogOpen) {
+        AlertDialog(
+            onDismissRequest = {
+                dialogOpen = false
+            },
+            properties = DialogProperties(dismissOnClickOutside = true),
+            title = {
+                Text(stringResource(R.string.connection_error_title))
+            },
+            text = {
+                Text(stringResource(R.string.connection_error_message))
+            },
+            confirmButton = {
+                Button(onClick = {
+                    onRefreshPressed()
+                }) {
+                    Text("Retry")
+                }
+            },
+        )
+    }
 }
 
 @Composable

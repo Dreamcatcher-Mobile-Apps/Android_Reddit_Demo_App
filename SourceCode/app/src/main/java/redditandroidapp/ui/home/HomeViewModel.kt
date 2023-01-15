@@ -42,7 +42,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     private fun triggerRepositoryToFetchRedditPosts(request: () -> Unit) {
-        stateData = stateData.copy(isLoading = true)
+        stateData = stateData.copy(isLoading = true, errorMessage = null)
         viewModelScope.launch {
             request.invoke()
         }
