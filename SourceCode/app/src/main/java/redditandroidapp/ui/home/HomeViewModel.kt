@@ -25,11 +25,12 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     fun triggerFreshRedditPostsFetching() {
+        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(null, true)
     }
 
     fun triggerMoreRedditPostsFetching() {
-        _state.value = State.ContentDisplayedAndRefreshing(postsRepository.getCachedPosts())
+        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(postsRepository.getLastPostName(), false)
     }
 
@@ -53,7 +54,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         cachedRedditPosts: List<RedditPostModel>
     ) {
         if (cachedRedditPosts.isNotEmpty()) _state.value =
-            State.ContentDisplayedAndRefreshingError(cachedRedditPosts, errorMessage)
+            State.ContentDisplayedAndLoadingError(cachedRedditPosts, errorMessage)
         else _state.value = State.InitialLoadingError(errorMessage)
     }
 }
@@ -62,8 +63,8 @@ sealed class State {
     object InitialLoading : State()
     data class InitialLoadingError(val errorMessage: String) : State()
     data class ContentDisplayedSuccessfully(val posts: List<RedditPostModel>) : State()
-    data class ContentDisplayedAndRefreshing(val posts: List<RedditPostModel>) : State()
-    data class ContentDisplayedAndRefreshingError(
+    data class ContentDisplayedAndLoading(val posts: List<RedditPostModel>) : State()
+    data class ContentDisplayedAndLoadingError(
         val posts: List<RedditPostModel>,
         val errorMessage: String
     ) : State()

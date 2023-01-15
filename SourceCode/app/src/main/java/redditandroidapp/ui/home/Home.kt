@@ -4,8 +4,8 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -78,22 +78,37 @@ private fun HomeContent(
                         }
                     },
                 )
-                Toast.makeText(LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    LocalContext.current,
+                    R.string.connection_error_message,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             is State.ContentDisplayedSuccessfully -> {
-                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
-            }
-            is State.ContentDisplayedAndRefreshing -> {
-                LoadingSpinner(
-                    modifier = Modifier
-                        .padding(vertical = 24.dp)
-                        .size(50.dp)
+                PostsList(
+                    posts = state.posts,
+                    onEndOfListReached = onEndOfListReached,
+                    isLoading = false
                 )
-                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
             }
-            is State.ContentDisplayedAndRefreshingError -> {
-                PostsList(posts = state.posts, onEndOfListReached = onEndOfListReached)
-                Toast.makeText(LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT).show()
+            is State.ContentDisplayedAndLoading -> {
+                PostsList(
+                    posts = state.posts,
+                    onEndOfListReached = onEndOfListReached,
+                    isLoading = true
+                )
+            }
+            is State.ContentDisplayedAndLoadingError -> {
+                PostsList(
+                    posts = state.posts,
+                    onEndOfListReached = onEndOfListReached,
+                    isLoading = false
+                )
+                Toast.makeText(
+                    LocalContext.current,
+                    R.string.connection_error_message,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         Spacer(Modifier.height(8.dp))
@@ -114,26 +129,32 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 }
 
 @Composable
-private fun PostsList(posts: List<RedditPostModel>, onEndOfListReached: () -> Unit) {
+private fun PostsList(
+    posts: List<RedditPostModel>,
+    onEndOfListReached: () -> Unit,
+    isLoading: Boolean
+//    bringUsetToTop: Boolean
+) {
     val listState = rememberLazyListState()
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        state = listState,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        items(posts.size) { index ->
-            PostsListItem(posts[index])
-        }
-        item {
-            LaunchedEffect(true) {
-                onEndOfListReached.invoke()
+    BoxWithConstraints() {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = listState,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            items(posts.size) { index ->
+                PostsListItem(posts[index])
             }
-            LoadingSpinner(
-                modifier = Modifier
-                    .padding(vertical = 12.dp)
-                    .size(40.dp)
-            )
         }
+        // Todo: Is it okay to have 'if' here?
+//        if (isLoading) {
+//            Box(
+//                contentAlignment = Alignment.Center,
+//                modifier = Modifier.fillMaxSize()
+//            ) {
+//                CircularProgressIndicator(color = Color.Green)
+//            }
+//        }
     }
 }
 
