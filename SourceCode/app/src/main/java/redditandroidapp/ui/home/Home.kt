@@ -32,7 +32,7 @@ import redditandroidapp.data.models.RedditPostModel
 fun Home(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val viewState = viewModel.stateData
     val listState = rememberLazyListState()
 
     Surface(Modifier.fillMaxSize()) {
@@ -47,7 +47,7 @@ fun Home(
 
 @Composable
 private fun HomeContent(
-    state: State,
+    state: StateData,
     listState: LazyListState,
     onEndOfListReached: () -> Unit,
     onRefreshPressed: () -> Unit
@@ -56,68 +56,80 @@ private fun HomeContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AppBar(onRefreshPressed)
-        when (state) {
-            is State.InitialLoading -> {
+        state.errorMessage?.let {
+            Toast.makeText(
+                LocalContext.current,
+                it,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if (state.errorMessage == null && !state.isLoading) {
+            Toast.makeText(
+                LocalContext.current,
+                "Suck-cess",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        BoxWithConstraints(contentAlignment = Alignment.Center) {
+
+            PostsList(
+                posts = state.posts,
+                listState = listState,
+                onEndOfListReached = onEndOfListReached,
+            )
+            if (state.isLoading) {
                 LoadingSpinner(
                     modifier = Modifier
                         .padding(vertical = 24.dp)
                         .size(50.dp)
                 )
             }
-            is State.InitialLoadingError -> {
-                AlertDialog(
-                    onDismissRequest = { /*TODO*/ },
-                    title = {
-                        Text(text = "Oops!")
-                    },
-                    text = {
-                        Text("There was an error fetching Reddit posts. Tap here to try again.")
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                onRefreshPressed()
-                            }) {
-                            Text("Retry")
-                        }
-                    },
-                )
-                Toast.makeText(
-                    LocalContext.current,
-                    R.string.connection_error_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            is State.ContentDisplayedSuccessfully -> {
-                PostsList(
-                    posts = state.posts,
-                    listState = listState,
-                    onEndOfListReached = onEndOfListReached,
-                    isLoading = false
-                )
-            }
-            is State.ContentDisplayedAndLoading -> {
-                PostsList(
-                    posts = state.posts,
-                    listState = listState,
-                    onEndOfListReached = onEndOfListReached,
-                    isLoading = true
-                )
-            }
-            is State.ContentDisplayedAndLoadingError -> {
-                PostsList(
-                    posts = state.posts,
-                    listState = listState,
-                    onEndOfListReached = onEndOfListReached,
-                    isLoading = false
-                )
-                Toast.makeText(
-                    LocalContext.current,
-                    R.string.connection_error_message,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
         }
+
+
+//        when (state) {
+//            is State.InitialLoading -> {
+//                LoadingSpinner(
+//                    modifier = Modifier
+//                        .padding(vertical = 24.dp)
+//                        .size(50.dp)
+//                )
+//            }
+//            is State.InitialLoadingError -> {
+//
+//            }
+//            is State.ContentDisplayedSuccessfully -> {
+//                PostsList(
+//                    posts = state.posts,
+//                    listState = listState,
+//                    onEndOfListReached = onEndOfListReached,
+//                    isLoading = false
+//                )
+//            }
+//            is State.ContentDisplayedAndLoading -> {
+//                PostsList(
+//                    posts = state.posts,
+//                    listState = listState,
+//                    onEndOfListReached = onEndOfListReached,
+//                    isLoading = true
+//                )
+//            }
+//            is State.ContentDisplayedAndLoadingError -> {
+//                PostsList(
+//                    posts = state.posts,
+//                    listState = listState,
+//                    onEndOfListReached = onEndOfListReached,
+//                    isLoading = false
+//                )
+//                Toast.makeText(
+//                    LocalContext.current,
+//                    R.string.connection_error_message,
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+
         Spacer(Modifier.height(8.dp))
     }
 }
@@ -136,33 +148,53 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 }
 
 @Composable
+private fun errorDialog(onRefreshPressed: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = { /*TODO*/ },
+        title = {
+            Text(text = "Oops!")
+        },
+        text = {
+            Text("There was an error fetching Reddit posts. Tap here to try again.")
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    onRefreshPressed()
+                }) {
+                Text("Retry")
+            }
+        },
+    )
+    Toast.makeText(
+        LocalContext.current,
+        R.string.connection_error_message,
+        Toast.LENGTH_SHORT
+    ).show()
+}
+
+@Composable
 private fun PostsList(
     posts: List<RedditPostModel>,
     listState: LazyListState,
     onEndOfListReached: () -> Unit,
-    isLoading: Boolean
-//    bringUsetToTop: Boolean
 ) {
-//    val listState = rememberLazyListState()
-    BoxWithConstraints() {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            state = listState,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            items(posts.size) { index ->
-                PostsListItem(posts[index])
-            }
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        state = listState,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        items(posts.size) { index ->
+            PostsListItem(posts[index])
         }
-        // Todo: Is it okay to have 'if' here?
-//        if (isLoading) {
-//            Box(
-//                contentAlignment = Alignment.Center,
-//                modifier = Modifier.fillMaxSize()
-//            ) {
-//                CircularProgressIndicator(color = Color.Green)
-//            }
-//        }
+        item {
+            LaunchedEffect(true) {
+                onEndOfListReached.invoke()
+            }
+//            LoadingSpinner(modifier = Modifier
+//                .padding(vertical = 12.dp)
+//                .size(40.dp))
+        }
     }
 }
 

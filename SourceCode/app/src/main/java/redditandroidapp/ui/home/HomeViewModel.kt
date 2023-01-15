@@ -1,5 +1,8 @@
 package redditandroidapp.ui.home
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,13 +23,16 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     val state: StateFlow<State>
         get() = _state
 
+    var stateData by mutableStateOf(StateData())
+
     init {
         triggerFreshRedditPostsFetching()
     }
 
     fun refreshPostsRequested() {
         _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
-//        triggerRedditPostsFetching(null, true)
+        triggerRedditPostsFetching(null, true)
+        stateData = stateData.copy(posts = postsRepository.getCachedPosts())
     }
 
     fun triggerFreshRedditPostsFetching() {
@@ -35,12 +41,14 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     fun triggerMoreRedditPostsFetching() {
-        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
+//        stateData = stateData.copy(posts = postsRepository.getCachedPosts())
+//        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(postsRepository.getLastPostName(), false)
     }
 
     private fun triggerRedditPostsFetching(lastPostId: String?, refreshStoredPosts: Boolean) {
         val callback = this
+        stateData = stateData.copy(isLoading = true)
         viewModelScope.launch {
             postsRepository.fetchRedditPosts(
                 lastPostId,
@@ -51,6 +59,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     override fun postsFetchedSuccessfully(list: List<RedditPostModel>) {
+        stateData = stateData.copy(posts = list, isLoading = false, errorMessage = null)
         _state.value = State.ContentDisplayedSuccessfully(list)
     }
 
@@ -58,11 +67,21 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         errorMessage: String,
         cachedRedditPosts: List<RedditPostModel>
     ) {
-        if (cachedRedditPosts.isNotEmpty()) _state.value =
-            State.ContentDisplayedAndLoadingError(cachedRedditPosts, errorMessage)
+        if (cachedRedditPosts.isNotEmpty()) {
+            stateData = stateData.copy(errorMessage = errorMessage)
+            _state.value =
+                State.ContentDisplayedAndLoadingError(cachedRedditPosts, errorMessage)
+        }
         else _state.value = State.InitialLoadingError(errorMessage)
     }
 }
+
+data class StateData(
+    val posts: List<RedditPostModel> = emptyList(),
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null,
+    val scrollToTop: Boolean = false
+)
 
 sealed class State {
     object InitialLoading : State()
