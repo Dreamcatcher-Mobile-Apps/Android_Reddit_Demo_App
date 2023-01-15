@@ -16,16 +16,15 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
-    private val _cachedRedditPosts = ArrayList<RedditPostModel>()
-
-//    private val cachedRedditPosts: List<RedditPostModel>
-//        get() = _cachedRedditPosts
+    private val cachedRedditPosts = ArrayList<RedditPostModel>()
 
     fun getLastPostName(): String? {
-        return if (_cachedRedditPosts.isNotEmpty()) _cachedRedditPosts.last().id else null
+        return if (cachedRedditPosts.isNotEmpty()) cachedRedditPosts.last().id else null
     }
 
-    fun fetchFreshRedditPosts(callback: PostsFetchingCallback) {
+    fun fetchFreshRedditPosts(
+        callback: PostsFetchingCallback
+    ) {
         fetchRedditPosts(null, callback, clearAlreadyCachedPosts = true)
     }
 
@@ -59,7 +58,11 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                         val receivedList = it
                         val transformedList = transformReceivedRedditPostsList(receivedList)
                         val storedPosts =
-                            saveFetchedPostsInCache(clearAlreadyCachedPosts, transformedList, _cachedRedditPosts)
+                            saveFetchedPostsInCache(
+                                clearAlreadyCachedPosts,
+                                transformedList,
+                                cachedRedditPosts
+                            )
                         callback.postsFetchedSuccessfully(storedPosts)
                     }
                 else {

@@ -22,36 +22,33 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     private fun triggerFreshRedditPostsFetching() {
-        val callback = this
-        stateData = stateData.copy(isLoading = true)
-        viewModelScope.launch {
-            postsRepository.fetchFreshRedditPosts(callback)
+        triggerRepositoryToFetchRedditPosts {
+            postsRepository.fetchFreshRedditPosts(this)
         }
     }
 
     fun refreshPostsRequested() {
-        val callback = this
-        stateData = stateData.copy(isLoading = true)
-        viewModelScope.launch {
-            postsRepository.fetchFreshRedditPosts(callback)
+        triggerRepositoryToFetchRedditPosts {
+            postsRepository.fetchFreshRedditPosts(this)
         }
     }
 
     fun fetchMorePostsRequested() {
-        val callback = this
-        stateData = stateData.copy(isLoading = true)
-        viewModelScope.launch {
+        triggerRepositoryToFetchRedditPosts {
             val lastPostId = postsRepository.getLastPostName()
             if (lastPostId != null) {
-                postsRepository.fetchMoreRedditPosts(lastPostId, callback)
+                postsRepository.fetchMoreRedditPosts(lastPostId, this)
             } else {
-                // Todo
+                // Todo: throw exception or error.
             }
         }
     }
 
-    override fun cachedPostsReadyForDisplay(cachedRedditPosts: List<RedditPostModel>) {
-//        stateData = stateData.copy(posts = cachedRedditPosts)
+    private fun triggerRepositoryToFetchRedditPosts(request: () -> Unit) {
+        stateData = stateData.copy(isLoading = true)
+        viewModelScope.launch {
+            request.invoke()
+        }
     }
 
     override fun postsFetchedSuccessfully(list: List<RedditPostModel>) {
