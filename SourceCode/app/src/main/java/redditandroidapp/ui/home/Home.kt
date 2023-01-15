@@ -94,7 +94,7 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 @Composable
 private fun errorDialog(onRefreshPressed: () -> Unit) {
     AlertDialog(
-        onDismissRequest = { /*TODO*/ },
+        onDismissRequest = {},
         title = {
             Text(text = "Oops!")
         },
@@ -183,7 +183,7 @@ private fun LoadingSpinner(modifier: Modifier = Modifier) {
     CircularProgressIndicator(strokeWidth = 3.dp, modifier = modifier)
 }
 
-//TODO: Fix preview (needs adding mock data to pass to this preview)
+// Todo: Implement Jetpack Compose preview (needs adding mock data to be passed to this preview).
 //@Composable
 //@Preview
 //fun PreviewHomeContent() {

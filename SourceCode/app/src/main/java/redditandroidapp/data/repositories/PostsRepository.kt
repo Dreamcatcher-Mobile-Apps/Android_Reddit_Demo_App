@@ -16,22 +16,19 @@ import javax.inject.Inject
 // Data Repository - the main gate of the model (data) part of the application
 class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
+    // Todo: We only use this cache to read the last post name. Maybe it would be better
+    // to read this from the viewmodel's state?
     private val cachedRedditPosts = ArrayList<RedditPostModel>()
 
     fun getLastPostName(): String? {
         return if (cachedRedditPosts.isNotEmpty()) cachedRedditPosts.last().id else null
     }
 
-    fun fetchFreshRedditPosts(
-        callback: PostsFetchingCallback
-    ) {
+    fun fetchFreshRedditPosts(callback: PostsFetchingCallback) {
         fetchRedditPosts(null, callback, clearAlreadyCachedPosts = true)
     }
 
-    fun fetchMoreRedditPosts(
-        lastPostName: String,
-        callback: PostsFetchingCallback
-    ) {
+    fun fetchMoreRedditPosts(lastPostName: String, callback: PostsFetchingCallback) {
         fetchRedditPosts(lastPostName, callback, clearAlreadyCachedPosts = false)
     }
 
