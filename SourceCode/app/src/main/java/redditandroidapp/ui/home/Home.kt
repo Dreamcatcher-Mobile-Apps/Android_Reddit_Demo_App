@@ -36,7 +36,7 @@ fun Home(
         HomeContent(
             state = viewState,
             listState = listState,
-            onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
+            onEndOfListReached = viewModel::fetchMorePostsRequested,
             onRefreshPressed = viewModel::refreshPostsRequested
         )
     }

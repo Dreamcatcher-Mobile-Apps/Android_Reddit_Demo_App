@@ -18,17 +18,28 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
 
     private val _cachedRedditPosts = ArrayList<RedditPostModel>()
 
-    val cachedRedditPosts: List<RedditPostModel>
-        get() = _cachedRedditPosts
+//    private val cachedRedditPosts: List<RedditPostModel>
+//        get() = _cachedRedditPosts
 
     fun getLastPostName(): String? {
-        return if (cachedRedditPosts.isNotEmpty()) cachedRedditPosts.last().id else null
+        return if (_cachedRedditPosts.isNotEmpty()) _cachedRedditPosts.last().id else null
     }
 
-    fun fetchRedditPosts(
+    fun fetchFreshRedditPosts(callback: PostsFetchingCallback) {
+        fetchRedditPosts(null, callback, clearAlreadyCachedPosts = true)
+    }
+
+    fun fetchMoreRedditPosts(
+        lastPostName: String,
+        callback: PostsFetchingCallback
+    ) {
+        fetchRedditPosts(lastPostName, callback, clearAlreadyCachedPosts = false)
+    }
+
+    private fun fetchRedditPosts(
         lastPostName: String?,
         callback: PostsFetchingCallback,
-        clearCache: Boolean
+        clearAlreadyCachedPosts: Boolean
     ) {
         val endpoint = if (lastPostName == null) apiClient.getFreshRedditPosts()
         else apiClient.getNextPageOfRedditPosts(lastPostName)
@@ -48,26 +59,23 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                         val receivedList = it
                         val transformedList = transformReceivedRedditPostsList(receivedList)
                         val storedPosts =
-                            saveFetchedPostsInCache(clearCache, transformedList, _cachedRedditPosts)
+                            saveFetchedPostsInCache(clearAlreadyCachedPosts, transformedList, _cachedRedditPosts)
                         callback.postsFetchedSuccessfully(storedPosts)
                     }
                 else {
                     logErrorDetails(prepareLogFriendlyErrorMessage(null))
-                    callback.postsFetchingError(
-                        prepareHumanFriendlyErrorMessage(null),
-                        cachedRedditPosts
-                    )
+                    callback.postsFetchingError(prepareHumanFriendlyErrorMessage(null))
                 }
             }
 
             override fun onFailure(call: Call<PostsResponseGsonModel>, t: Throwable) {
                 logErrorDetails(prepareLogFriendlyErrorMessage(t))
-                callback.postsFetchingError(prepareHumanFriendlyErrorMessage(t), cachedRedditPosts)
+                callback.postsFetchingError(prepareHumanFriendlyErrorMessage(t))
             }
         })
     }
 
-    fun saveFetchedPostsInCache(
+    private fun saveFetchedPostsInCache(
         clearCache: Boolean,
         postsToBeStored: List<RedditPostModel>,
         postsAlreadyCached: MutableList<RedditPostModel>
@@ -75,10 +83,6 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
         if (clearCache) postsAlreadyCached.clear()
         postsAlreadyCached.addAll(postsToBeStored)
         return postsAlreadyCached
-    }
-
-    fun getCachedPosts(): List<RedditPostModel> {
-        return cachedRedditPosts
     }
 
     private fun prepareLogFriendlyErrorMessage(throwable: Throwable?): String {

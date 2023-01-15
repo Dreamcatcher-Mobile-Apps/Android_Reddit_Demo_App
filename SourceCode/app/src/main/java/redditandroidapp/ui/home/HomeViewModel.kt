@@ -21,45 +21,46 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         triggerFreshRedditPostsFetching()
     }
 
-    fun refreshPostsRequested() {
-        triggerRedditPostsFetching(null, true)
-        stateData = stateData.copy(posts = postsRepository.getCachedPosts())
-    }
-
-    fun triggerFreshRedditPostsFetching() {
-        //_state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
-        triggerRedditPostsFetching(null, true)
-    }
-
-    fun triggerMoreRedditPostsFetching() {
-//        stateData = stateData.copy(posts = postsRepository.getCachedPosts())
-//        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
-        triggerRedditPostsFetching(postsRepository.getLastPostName(), false)
-    }
-
-    private fun triggerRedditPostsFetching(lastPostId: String?, refreshStoredPosts: Boolean) {
+    private fun triggerFreshRedditPostsFetching() {
         val callback = this
         stateData = stateData.copy(isLoading = true)
         viewModelScope.launch {
-            postsRepository.fetchRedditPosts(
-                lastPostId,
-                callback,
-                refreshStoredPosts
-            )
+            postsRepository.fetchFreshRedditPosts(callback)
         }
+    }
+
+    fun refreshPostsRequested() {
+        val callback = this
+        stateData = stateData.copy(isLoading = true)
+        viewModelScope.launch {
+            postsRepository.fetchFreshRedditPosts(callback)
+        }
+    }
+
+    fun fetchMorePostsRequested() {
+        val callback = this
+        stateData = stateData.copy(isLoading = true)
+        viewModelScope.launch {
+            val lastPostId = postsRepository.getLastPostName()
+            if (lastPostId != null) {
+                postsRepository.fetchMoreRedditPosts(lastPostId, callback)
+            } else {
+                // Todo
+            }
+        }
+    }
+
+    override fun cachedPostsReadyForDisplay(cachedRedditPosts: List<RedditPostModel>) {
+//        stateData = stateData.copy(posts = cachedRedditPosts)
     }
 
     override fun postsFetchedSuccessfully(list: List<RedditPostModel>) {
         stateData = stateData.copy(posts = list, isLoading = false, errorMessage = null)
     }
 
-    override fun postsFetchingError(
-        errorMessage: String,
-        cachedRedditPosts: List<RedditPostModel>
-    ) {
-        if (cachedRedditPosts.isNotEmpty()) {
-            stateData = stateData.copy(errorMessage = errorMessage)
-        }
+    override fun postsFetchingError(errorMessage: String) {
+        // A bug. When we open app without internet, the errorMessage goes through, but the isLoading doesnt!
+        stateData = stateData.copy(isLoading = false, errorMessage = errorMessage)
     }
 }
 
