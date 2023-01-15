@@ -109,8 +109,8 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
     }
 
     private fun transformReceivedRedditPostsList(list: List<SinglePostDataGsonModel>): List<RedditPostModel> {
-        return list.mapNotNull {
-            it.post?.let {
+        return list.mapNotNull { apiPostModel ->
+            apiPostModel.post?.let {
                 RedditPostModel(
                     it.id,
                     it.permalink,

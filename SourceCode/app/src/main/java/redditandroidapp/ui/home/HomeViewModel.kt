@@ -57,6 +57,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 
     override fun postsFetchingError(errorMessage: String) {
         // A bug. When we open app without internet, the errorMessage goes through, but the isLoading doesnt!
+        // Reason: fetchMorePostsRequested is triggered when  we have no posts displayed.
         stateData = stateData.copy(isLoading = false, errorMessage = errorMessage)
     }
 }

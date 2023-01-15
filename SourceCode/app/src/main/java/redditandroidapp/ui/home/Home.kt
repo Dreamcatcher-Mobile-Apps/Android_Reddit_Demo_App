@@ -54,19 +54,11 @@ private fun HomeContent(
     ) {
         AppBar(onRefreshPressed)
         state.errorMessage?.let {
-            Toast.makeText(
-                LocalContext.current,
-                it,
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
         }
         // Todo: Error dialog?
         if (state.errorMessage == null && !state.isLoading) {
-            Toast.makeText(
-                LocalContext.current,
-                "Suck-cess",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(LocalContext.current, "Suck-cess", Toast.LENGTH_SHORT).show()
         }
 
         BoxWithConstraints(contentAlignment = Alignment.Center) {
@@ -89,8 +81,7 @@ private fun HomeContent(
 
 @Composable
 private fun AppBar(onRefreshPressed: () -> Unit) {
-    TopAppBar(
-        elevation = 4.dp,
+    TopAppBar(elevation = 4.dp,
         title = { Text(stringResource(R.string.app_name)) },
         backgroundColor = MaterialTheme.colors.primarySurface,
         actions = {
@@ -111,18 +102,15 @@ private fun errorDialog(onRefreshPressed: () -> Unit) {
             Text("There was an error fetching Reddit posts. Tap here to try again.")
         },
         confirmButton = {
-            Button(
-                onClick = {
-                    onRefreshPressed()
-                }) {
+            Button(onClick = {
+                onRefreshPressed()
+            }) {
                 Text("Retry")
             }
         },
     )
     Toast.makeText(
-        LocalContext.current,
-        R.string.connection_error_message,
-        Toast.LENGTH_SHORT
+        LocalContext.current, R.string.connection_error_message, Toast.LENGTH_SHORT
     ).show()
 }
 
@@ -175,15 +163,13 @@ private fun PostsListItem(post: RedditPostModel) {
             Column(Modifier.padding(horizontal = 16.dp)) {
                 post.title?.let {
                     Text(
-                        text = it,
-                        style = MaterialTheme.typography.subtitle1
+                        text = it, style = MaterialTheme.typography.subtitle1
                     )
                 }
                 Spacer(Modifier.height(16.dp))
                 post.author?.let {
                     Text(
-                        text = it,
-                        style = MaterialTheme.typography.subtitle2
+                        text = it, style = MaterialTheme.typography.subtitle2
                     )
                 }
                 Spacer(Modifier.height(16.dp))
