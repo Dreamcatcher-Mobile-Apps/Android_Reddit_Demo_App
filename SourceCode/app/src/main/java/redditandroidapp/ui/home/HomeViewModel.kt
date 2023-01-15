@@ -24,8 +24,13 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
         triggerFreshRedditPostsFetching()
     }
 
-    fun triggerFreshRedditPostsFetching() {
+    fun refreshPostsRequested() {
         _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
+//        triggerRedditPostsFetching(null, true)
+    }
+
+    fun triggerFreshRedditPostsFetching() {
+        //_state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(null, true)
     }
 

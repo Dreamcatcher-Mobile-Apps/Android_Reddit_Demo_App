@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
@@ -32,12 +33,14 @@ fun Home(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val viewState by viewModel.state.collectAsStateWithLifecycle()
+    val listState = rememberLazyListState()
 
     Surface(Modifier.fillMaxSize()) {
         HomeContent(
             state = viewState,
+            listState = listState,
             onEndOfListReached = viewModel::triggerMoreRedditPostsFetching,
-            onRefreshPressed = viewModel::triggerFreshRedditPostsFetching
+            onRefreshPressed = viewModel::refreshPostsRequested
         )
     }
 }
@@ -45,6 +48,7 @@ fun Home(
 @Composable
 private fun HomeContent(
     state: State,
+    listState: LazyListState,
     onEndOfListReached: () -> Unit,
     onRefreshPressed: () -> Unit
 ) {
@@ -87,6 +91,7 @@ private fun HomeContent(
             is State.ContentDisplayedSuccessfully -> {
                 PostsList(
                     posts = state.posts,
+                    listState = listState,
                     onEndOfListReached = onEndOfListReached,
                     isLoading = false
                 )
@@ -94,6 +99,7 @@ private fun HomeContent(
             is State.ContentDisplayedAndLoading -> {
                 PostsList(
                     posts = state.posts,
+                    listState = listState,
                     onEndOfListReached = onEndOfListReached,
                     isLoading = true
                 )
@@ -101,6 +107,7 @@ private fun HomeContent(
             is State.ContentDisplayedAndLoadingError -> {
                 PostsList(
                     posts = state.posts,
+                    listState = listState,
                     onEndOfListReached = onEndOfListReached,
                     isLoading = false
                 )
@@ -131,11 +138,12 @@ private fun AppBar(onRefreshPressed: () -> Unit) {
 @Composable
 private fun PostsList(
     posts: List<RedditPostModel>,
+    listState: LazyListState,
     onEndOfListReached: () -> Unit,
     isLoading: Boolean
 //    bringUsetToTop: Boolean
 ) {
-    val listState = rememberLazyListState()
+//    val listState = rememberLazyListState()
     BoxWithConstraints() {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
