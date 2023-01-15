@@ -35,11 +35,8 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 
     fun fetchMorePostsRequested() {
         triggerRepositoryToFetchRedditPosts {
-            val lastPostId = postsRepository.getLastPostName()
-            if (lastPostId != null) {
+            postsRepository.getLastPostName()?.let { lastPostId ->
                 postsRepository.fetchMoreRedditPosts(lastPostId, this)
-            } else {
-                // Todo: throw exception or error.
             }
         }
     }
@@ -56,8 +53,9 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     override fun postsFetchingError(errorMessage: String) {
-        // A bug. When we open app without internet, the errorMessage goes through, but the isLoading doesnt!
-        // Reason: fetchMorePostsRequested is triggered when  we have no posts displayed.
+        // Todo: A little bug. When we open app without internet, the errorMessage goes through,
+        //  but the isLoading doesnt! Reason: fetchMorePostsRequested is triggered when  we have
+        //  no posts displayed.
         stateData = stateData.copy(isLoading = false, errorMessage = errorMessage)
     }
 }

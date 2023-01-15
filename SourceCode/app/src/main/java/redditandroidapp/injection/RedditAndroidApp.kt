@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.res.Resources
 import dagger.hilt.android.HiltAndroidApp
 
+// Todo: Is it possible to unify this file with RedditApp.kt?
+
 @HiltAndroidApp
 class RedditAndroidApp : Application() {
 
@@ -20,5 +22,3 @@ class RedditAndroidApp : Application() {
         }
     }
 }
-
-// Todo: Unify with RedditApp file.
