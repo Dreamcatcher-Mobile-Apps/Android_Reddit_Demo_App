@@ -15,7 +15,7 @@ sealed class Screen(val route: String) {
 }
 
 @Composable
-fun rememberJetcasterAppState(
+fun rememberAppState(
     navController: NavHostController = rememberNavController(),
     context: Context = LocalContext.current
 ) = remember(navController, context) {

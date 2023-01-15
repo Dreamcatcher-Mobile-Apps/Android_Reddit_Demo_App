@@ -7,7 +7,7 @@ import redditandroidapp.ui.home.Home
 
 @Composable
 fun RedditApp(
-    appState: RedditAndroidAppState = rememberJetcasterAppState()
+    appState: RedditAndroidAppState = rememberAppState()
 ) {
     NavHost(
         navController = appState.navController,
