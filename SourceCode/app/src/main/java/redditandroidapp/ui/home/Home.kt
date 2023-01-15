@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,13 +21,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.ExperimentalLifecycleComposeApi
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.rememberAsyncImagePainter
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
 
-@OptIn(ExperimentalLifecycleComposeApi::class)
 @Composable
 fun Home(
     viewModel: HomeViewModel = hiltViewModel()
@@ -63,6 +60,7 @@ private fun HomeContent(
                 Toast.LENGTH_SHORT
             ).show()
         }
+        // Todo: Error dialog?
         if (state.errorMessage == null && !state.isLoading) {
             Toast.makeText(
                 LocalContext.current,
@@ -72,7 +70,6 @@ private fun HomeContent(
         }
 
         BoxWithConstraints(contentAlignment = Alignment.Center) {
-
             PostsList(
                 posts = state.posts,
                 listState = listState,
@@ -86,50 +83,6 @@ private fun HomeContent(
                 )
             }
         }
-
-
-//        when (state) {
-//            is State.InitialLoading -> {
-//                LoadingSpinner(
-//                    modifier = Modifier
-//                        .padding(vertical = 24.dp)
-//                        .size(50.dp)
-//                )
-//            }
-//            is State.InitialLoadingError -> {
-//
-//            }
-//            is State.ContentDisplayedSuccessfully -> {
-//                PostsList(
-//                    posts = state.posts,
-//                    listState = listState,
-//                    onEndOfListReached = onEndOfListReached,
-//                    isLoading = false
-//                )
-//            }
-//            is State.ContentDisplayedAndLoading -> {
-//                PostsList(
-//                    posts = state.posts,
-//                    listState = listState,
-//                    onEndOfListReached = onEndOfListReached,
-//                    isLoading = true
-//                )
-//            }
-//            is State.ContentDisplayedAndLoadingError -> {
-//                PostsList(
-//                    posts = state.posts,
-//                    listState = listState,
-//                    onEndOfListReached = onEndOfListReached,
-//                    isLoading = false
-//                )
-//                Toast.makeText(
-//                    LocalContext.current,
-//                    R.string.connection_error_message,
-//                    Toast.LENGTH_SHORT
-//                ).show()
-//            }
-//        }
-
         Spacer(Modifier.height(8.dp))
     }
 }

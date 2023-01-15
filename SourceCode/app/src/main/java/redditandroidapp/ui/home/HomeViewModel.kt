@@ -6,8 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import redditandroidapp.data.models.RedditPostModel
 import redditandroidapp.data.repositories.PostsRepository
@@ -17,12 +15,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(private val postsRepository: PostsRepository) : ViewModel(),
     PostsFetchingCallback {
 
-    // Holds our view state which the UI collects via [state]
-    private val _state = MutableStateFlow<State>(State.InitialLoading)
-
-    val state: StateFlow<State>
-        get() = _state
-
     var stateData by mutableStateOf(StateData())
 
     init {
@@ -30,7 +22,6 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     }
 
     fun refreshPostsRequested() {
-        _state.value = State.ContentDisplayedAndLoading(postsRepository.getCachedPosts())
         triggerRedditPostsFetching(null, true)
         stateData = stateData.copy(posts = postsRepository.getCachedPosts())
     }
@@ -60,7 +51,6 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
 
     override fun postsFetchedSuccessfully(list: List<RedditPostModel>) {
         stateData = stateData.copy(posts = list, isLoading = false, errorMessage = null)
-        _state.value = State.ContentDisplayedSuccessfully(list)
     }
 
     override fun postsFetchingError(
@@ -69,10 +59,7 @@ class HomeViewModel @Inject constructor(private val postsRepository: PostsReposi
     ) {
         if (cachedRedditPosts.isNotEmpty()) {
             stateData = stateData.copy(errorMessage = errorMessage)
-            _state.value =
-                State.ContentDisplayedAndLoadingError(cachedRedditPosts, errorMessage)
         }
-        else _state.value = State.InitialLoadingError(errorMessage)
     }
 }
 
@@ -82,14 +69,3 @@ data class StateData(
     val errorMessage: String? = null,
     val scrollToTop: Boolean = false
 )
-
-sealed class State {
-    object InitialLoading : State()
-    data class InitialLoadingError(val errorMessage: String) : State()
-    data class ContentDisplayedSuccessfully(val posts: List<RedditPostModel>) : State()
-    data class ContentDisplayedAndLoading(val posts: List<RedditPostModel>) : State()
-    data class ContentDisplayedAndLoadingError(
-        val posts: List<RedditPostModel>,
-        val errorMessage: String
-    ) : State()
-}
