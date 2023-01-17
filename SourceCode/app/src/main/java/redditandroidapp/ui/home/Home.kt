@@ -58,7 +58,7 @@ private fun HomeContent(
         }
         // Todo: Error dialog?
         if (state.errorMessage == null && !state.isLoading) {
-            Toast.makeText(LocalContext.current, "Suck-cess", Toast.LENGTH_SHORT).show()
+            Toast.makeText(LocalContext.current, stringResource(R.string.toast_message), Toast.LENGTH_SHORT).show()
         }
 
         BoxWithConstraints(contentAlignment = Alignment.Center) {
