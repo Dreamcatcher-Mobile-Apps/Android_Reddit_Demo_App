@@ -15,5 +15,6 @@
 
     <string name="error">Error</string>
     <string name="error_api_call_failure">Error: API Call failure.</string>
+    <string name="toast_message">Articles updated successfully</string>
 
 </resources>
