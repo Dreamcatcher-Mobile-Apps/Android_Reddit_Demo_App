@@ -167,6 +167,12 @@ private fun PostsListItem(post: RedditPostModel) {
                     )
                 }
                 Spacer(Modifier.height(16.dp))
+                post.text?.let {
+                    Text(
+                        text = it, style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
                 post.author?.let {
                     Text(
                         text = it, style = MaterialTheme.typography.subtitle2

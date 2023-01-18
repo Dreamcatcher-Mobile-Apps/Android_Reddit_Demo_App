@@ -114,6 +114,7 @@ class PostsRepository @Inject constructor(private val apiClient: ApiClient) {
                     it.title,
                     it.thumbnail,
                     it.author,
+                    it.text
                 )
             }
         }

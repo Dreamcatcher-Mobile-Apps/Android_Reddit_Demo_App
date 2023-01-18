@@ -43,6 +43,7 @@ class PostsRepositoryTest {
         val url = "fake/post/url"
         val imageUrl = "fake/post/image/url"
         val author = "fake/post/author"
+        val text = "fake/post/author"
 
         // Prepare fake Post Entity (DB object)
 //        fakeRedditPostModel = RedditPostModel(id, url, title, imageUrl, author, null)
