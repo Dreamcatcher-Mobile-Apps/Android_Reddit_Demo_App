@@ -53,9 +53,13 @@ private fun HomeContent(
     ) {
         AppBar(onRefreshPressed)
         state.errorMessage?.let {
-            ErrorDialog(onRefreshPressed)
+            Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
         }
-        // Stacks widgets on top of each other
+        // Todo: Error dialog?
+        if (state.errorMessage == null && !state.isLoading) {
+            Toast.makeText(LocalContext.current, stringResource(R.string.toast_message), Toast.LENGTH_SHORT).show()
+        }
+
         BoxWithConstraints(contentAlignment = Alignment.Center) {
             PostsList(
                 posts = state.posts,
@@ -164,6 +168,12 @@ private fun PostsListItem(post: RedditPostModel) {
             Spacer(Modifier.height(16.dp))
             Column(Modifier.padding(horizontal = 16.dp)) {
                 post.title?.let {
+                    Text(
+                        text = it, style = MaterialTheme.typography.subtitle1
+                    )
+                }
+                Spacer(Modifier.height(16.dp))
+                post.text?.let {
                     Text(
                         text = it, style = MaterialTheme.typography.subtitle1
                     )
