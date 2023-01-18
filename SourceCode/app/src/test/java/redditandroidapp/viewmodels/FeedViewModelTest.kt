@@ -39,9 +39,10 @@ class FeedViewModelTest {
         val url = "fake/post/url"
         val imageUrl = "fake/post/image/url"
         val author = "fake/post/author"
+        val text = "fake/post/author"
 
         // Prepare fake Database Entity
-        fakeRedditPostModel = RedditPostModel(url, title, imageUrl, author, null)
+        fakeRedditPostModel = RedditPostModel(url, title, imageUrl, author, text, null)
 
         // Prepare fake Database Entities List
         fakePostEntitiesList.add(fakeRedditPostModel!!)
