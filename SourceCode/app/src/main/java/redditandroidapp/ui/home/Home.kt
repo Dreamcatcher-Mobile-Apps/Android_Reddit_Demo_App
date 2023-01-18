@@ -1,5 +1,6 @@
 package redditandroidapp.ui.home
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -54,10 +56,15 @@ private fun HomeContent(
         AppBar(onRefreshPressed)
         state.errorMessage?.let {
             Toast.makeText(LocalContext.current, it, Toast.LENGTH_SHORT).show()
+            ErrorDialog(onRefreshPressed)
         }
-        // Todo: Error dialog?
+
         if (state.errorMessage == null && !state.isLoading) {
-            Toast.makeText(LocalContext.current, stringResource(R.string.toast_message), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                LocalContext.current,
+                stringResource(R.string.toast_message),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         BoxWithConstraints(contentAlignment = Alignment.Center) {
@@ -211,7 +218,7 @@ private fun LoadingSpinner(modifier: Modifier = Modifier) {
 //    }
 //}
 
-private fun onRefresh(onRefreshPressed: () -> Unit, listState: LazyListState) {
+private suspend fun onRefresh(onRefreshPressed: () -> Unit, listState: LazyListState) {
     onRefreshPressed()
     listState.scrollToItem(index = 0)
 }
