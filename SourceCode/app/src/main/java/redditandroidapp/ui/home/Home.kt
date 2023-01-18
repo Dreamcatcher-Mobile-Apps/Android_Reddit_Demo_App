@@ -1,6 +1,5 @@
 package redditandroidapp.ui.home
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -24,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
+import redditandroidapp.utils.isScrolledToEnd
 
 @Composable
 fun Home(
@@ -130,14 +129,15 @@ private fun PostsList(
         items(posts.size) { index ->
             PostsListItem(posts[index])
         }
-        item {
-            LaunchedEffect(true) {
-                onEndOfListReached.invoke()
-            }
-//            LoadingSpinner(modifier = Modifier
-//                .padding(vertical = 12.dp)
-//                .size(40.dp))
+    }
+
+    val endOfListReached by remember {
+        derivedStateOf {
+            listState.isScrolledToEnd()
         }
+    }
+    LaunchedEffect(endOfListReached) {
+        onEndOfListReached()
     }
 }
 
@@ -200,3 +200,8 @@ private fun LoadingSpinner(modifier: Modifier = Modifier) {
 //        )
 //    }
 //}
+
+private fun onRefresh(onRefreshPressed: () -> Unit, listState: LazyListState) {
+    onRefreshPressed()
+    listState.scrollToItem(index = 0)
+}
