@@ -24,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import redditandroidapp.R
 import redditandroidapp.data.models.RedditPostModel
+import androidx.compose.ui.text.style.TextOverflow
 
 @Composable
 fun Home(
@@ -168,9 +169,7 @@ private fun PostsListItem(post: RedditPostModel) {
                 }
                 Spacer(Modifier.height(16.dp))
                 post.text?.let {
-                    Text(
-                        text = it, style = MaterialTheme.typography.subtitle1
-                    )
+                    Text(text = it, maxLines = 2, overflow = TextOverflow.Ellipsis,  style = MaterialTheme.typography.subtitle1)
                 }
                 Spacer(Modifier.height(16.dp))
                 post.author?.let {
